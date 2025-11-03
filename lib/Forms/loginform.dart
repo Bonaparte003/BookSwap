@@ -64,11 +64,9 @@ class LoginForm {
         );
 
         // Close loading indicator
+        // Navigation will happen automatically via AuthWrapper listening to auth state
         if (context.mounted) {
           Navigator.of(context).pop(); // Close loading dialog
-          
-          // Navigate to splash/home screen
-          Navigator.pushNamed(context, AppRoutes.splash);
         }
       } catch (e) {
         // Close loading indicator

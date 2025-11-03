@@ -77,6 +77,17 @@ class Login extends StatelessWidget {
                                 child: ElevatedButton(
                                   onPressed: () async {
                                     await loginForm.login(context);
+                                    if (context.mounted) {
+                                      Navigator.pushReplacementNamed(context, AppRoutes.home);
+                                    }
+                                    else{
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Error logging in'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
                                   },
                                   child: Text(
                                     'Login', 

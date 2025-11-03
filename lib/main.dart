@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bookswap/routes/routes.dart';
 
 void main() async {
@@ -7,16 +8,26 @@ void main() async {
   
   // Initialize Firebase
   try {
-    await Firebase.initializeApp();
-    debugPrint('✅ Firebase initialized successfully');
+    // Check if Firebase apps are already initialized (in case of hot restart)
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp();
+      debugPrint('✅ Firebase initialized successfully');
+    } else {
+      debugPrint('✅ Firebase already initialized');
+    }
   } catch (e, stackTrace) {
     // Firebase initialization failed
     debugPrint('❌ Firebase initialization error: $e');
     debugPrint('Stack trace: $stackTrace');
-    debugPrint('Note: Make sure google-services.json is properly configured and app is rebuilt');
+    debugPrint('Note: The google-services.json plugin may not have processed correctly.');
+    debugPrint('Try: flutter clean, then flutter pub get, then full rebuild');
   }
   
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

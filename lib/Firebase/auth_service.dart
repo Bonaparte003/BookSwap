@@ -30,6 +30,24 @@ class AuthService {
     }
   }
 
+  // Auth state changes stream - Firebase automatically tracks login state
+  // This stream emits whenever the user logs in, logs out, or token refreshes
+  Stream<User?> get authStateChanges {
+    if (!isFirebaseInitialized) {
+      return Stream.value(null);
+    }
+    try {
+      return auth.authStateChanges();
+    } catch (e) {
+      return Stream.value(null);
+    }
+  }
+
+  // Check if user is logged in
+  bool get isLoggedIn {
+    return currentUser != null;
+  }
+
   // Sign up with email and password
   Future<UserCredential?> signUp({
     required String email,

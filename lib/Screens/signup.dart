@@ -51,7 +51,7 @@ class Signup extends StatelessWidget {
                                   style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255)),
                                   decoration: InputDecoration(
                                     labelText: 'First Name',
-                                    labelStyle: TextStyle(color: const Color.fromARGB(255, 255, 255, 255)),
+                                    labelStyle: TextStyle(color: const Color.fromARGB(144, 255, 255, 255)),
                                     prefixIcon: Icon(Icons.person, color: const Color.fromARGB(255, 255, 255, 255)),
                                     fillColor: const Color.fromARGB(255, 0, 0, 0),
                                     filled: true,
@@ -61,10 +61,10 @@ class Signup extends StatelessWidget {
                                 SizedBox(height: 16),
                                 TextFormField(
                                   controller: signupForm.lastNameController,
-                                  style: TextStyle(color: const Color.fromARGB(156, 255, 255, 255)),
+                                  style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255)),
                                   decoration: InputDecoration(
                                     labelText: 'Last Name',
-                                    labelStyle: TextStyle(color: const Color.fromARGB(255, 255, 255, 255)),
+                                    labelStyle: TextStyle(color: const Color.fromARGB(153, 255, 255, 255)),
                                     prefixIcon: Icon(Icons.person_outline, color: const Color.fromARGB(255, 255, 255, 255)),
                                     fillColor: const Color.fromARGB(255, 0, 0, 0),
                                     filled: true,
