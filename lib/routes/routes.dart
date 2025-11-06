@@ -6,6 +6,7 @@ import 'package:bookswap/Screens/home.dart';
 import 'package:bookswap/Screens/add_book.dart';
 import 'package:bookswap/Screens/chat_detail.dart';
 import 'package:bookswap/Models/chat.dart';
+import 'package:bookswap/Models/book.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -27,7 +28,8 @@ Route generateRoute(RouteSettings settings) {
     case AppRoutes.home:
       return MaterialPageRoute(builder: (_) => const Home());
     case AppRoutes.addBook:
-      return MaterialPageRoute(builder: (_) => const AddBook());
+      final book = settings.arguments as Book?;
+      return MaterialPageRoute(builder: (_) => AddBook(book: book));
     case AppRoutes.chatDetail:
       final chat = settings.arguments as Chat;
       return MaterialPageRoute(

@@ -130,7 +130,7 @@ class _SignupState extends State<Signup> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color.fromARGB(255, 228, 80, 0).withValues(alpha: 0.5),
+                      const Color.fromARGB(255, 5, 101, 179).withValues(alpha: 0.7),
                       Colors.black.withValues(alpha: 1.0)
                     ],
                     begin: Alignment.topCenter,
@@ -169,7 +169,7 @@ class _SignupState extends State<Signup> {
                               filled: true,
                               fillColor: Colors.white,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(6),
                               ),
                             ),
                             textCapitalization: TextCapitalization.words,
@@ -183,7 +183,7 @@ class _SignupState extends State<Signup> {
                               filled: true,
                               fillColor: Colors.white,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(6),
                               ),
                             ),
                             textCapitalization: TextCapitalization.words,
@@ -198,7 +198,7 @@ class _SignupState extends State<Signup> {
                               filled: true,
                               fillColor: Colors.white,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(6),
                               ),
                             ),
                             validator: (value) {
@@ -229,7 +229,7 @@ class _SignupState extends State<Signup> {
                               filled: true,
                               fillColor: Colors.white,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(6),
                               ),
                             ),
                             validator: (value) {
@@ -260,7 +260,7 @@ class _SignupState extends State<Signup> {
                               filled: true,
                               fillColor: Colors.white,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(6),
                               ),
                             ),
                             validator: (value) {
@@ -279,14 +279,14 @@ class _SignupState extends State<Signup> {
                             child: ElevatedButton(
                               onPressed: _isLoading ? null : _handleSignup,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                                backgroundColor: const Color.fromARGB(255, 15, 120, 206),
+                                foregroundColor: const Color.fromARGB(255, 255, 255, 255),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 32,
                                   vertical: 18,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(6),
                                 ),
                                 elevation: 4,
                               ),
@@ -310,12 +310,26 @@ class _SignupState extends State<Signup> {
                             onPressed: () {
                               Navigator.pushReplacementNamed(context, AppRoutes.login);
                             },
-                            child: const Text(
-                              'Already have an account? Sign In',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                const Text(
+                                  'Already have an account?',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  'Sign In',
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 2, 131, 224),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -331,4 +345,3 @@ class _SignupState extends State<Signup> {
     );
   }
 }
-

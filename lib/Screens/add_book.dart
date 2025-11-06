@@ -6,7 +6,9 @@ import 'package:bookswap/Models/book.dart';
 import 'package:bookswap/Services/book_providers.dart';
 
 class AddBook extends ConsumerStatefulWidget {
-  const AddBook({super.key});
+  final Book? book; // If provided, we're in edit mode
+  
+  const AddBook({super.key, this.book});
 
   @override
   ConsumerState<AddBook> createState() => _AddBookState();
@@ -19,8 +21,22 @@ class _AddBookState extends ConsumerState<AddBook> {
   
   BookCondition _selectedCondition = BookCondition.good;
   File? _coverImage;
+  String? _existingImageUrl; // For edit mode - store existing image URL
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
+  bool get _isEditMode => widget.book != null;
+
+  @override
+  void initState() {
+    super.initState();
+    // If in edit mode, populate fields with existing book data
+    if (_isEditMode && widget.book != null) {
+      _titleController.text = widget.book!.title;
+      _authorController.text = widget.book!.author;
+      _selectedCondition = widget.book!.condition;
+      _existingImageUrl = widget.book!.coverImageUrl;
+    }
+  }
 
   @override
   void dispose() {
@@ -134,15 +150,15 @@ class _AddBookState extends ConsumerState<AddBook> {
     );
   }
 
-  /// Submit the form to create a new book
+  /// Submit the form to create or update a book
   Future<void> _submitForm() async {
     // Validate form
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    // Check if image is selected
-    if (_coverImage == null) {
+    // Check if image is selected (required for new books, optional for edits)
+    if (!_isEditMode && _coverImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please select a cover image'),
@@ -159,32 +175,69 @@ class _AddBookState extends ConsumerState<AddBook> {
     try {
       final bookService = ref.read(bookServiceProvider);
       
-      // Create the book
-      await bookService.createBook(
-        title: _titleController.text.trim(),
-        author: _authorController.text.trim(),
-        condition: _selectedCondition,
-        coverImageFile: _coverImage!,
-      );
-
-      // Show success message
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Book added successfully!'),
-            backgroundColor: Colors.green,
-          ),
+      if (_isEditMode && widget.book != null) {
+        // Update existing book
+        await bookService.updateBook(
+          bookId: widget.book!.id,
+          title: _titleController.text.trim(),
+          author: _authorController.text.trim(),
+          condition: _selectedCondition,
+          coverImageFile: _coverImage, // Optional - only if user changed image
         );
 
-        // Navigate back to home
-        Navigator.pop(context);
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Book updated successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Navigate back
+          Navigator.pop(context);
+        }
+      } else {
+        // Create new book
+        if (_coverImage == null) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Please select a cover image'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          setState(() => _isLoading = false);
+          return;
+        }
+
+        await bookService.createBook(
+          title: _titleController.text.trim(),
+          author: _authorController.text.trim(),
+          condition: _selectedCondition,
+          coverImageFile: _coverImage!,
+        );
+
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Book added successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Navigate back to home
+          Navigator.pop(context);
+        }
       }
     } catch (e) {
       // Show error message
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to add book: $e'),
+            content: Text(_isEditMode ? 'Failed to update book: $e' : 'Failed to add book: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -204,9 +257,9 @@ class _AddBookState extends ConsumerState<AddBook> {
       backgroundColor: const Color.fromARGB(255, 253, 230, 193),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-        title: const Text(
-          'Add New Book',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          _isEditMode ? 'Edit Book' : 'Add New Book',
+          style: const TextStyle(color: Colors.white),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -246,7 +299,7 @@ class _AddBookState extends ConsumerState<AddBook> {
                             width: 2,
                           ),
                         ),
-                        child: _coverImage == null
+                        child: _coverImage == null && _existingImageUrl == null
                             ? Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: const [
@@ -267,12 +320,32 @@ class _AddBookState extends ConsumerState<AddBook> {
                               )
                             : ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
-                                child: Image.file(
-                                  _coverImage!,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                ),
+                                child: _coverImage != null
+                                    ? Image.file(
+                                        _coverImage!,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                      )
+                                    : Image.network(
+                                        _existingImageUrl!,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return const Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.broken_image, size: 60, color: Colors.grey),
+                                              SizedBox(height: 10),
+                                              Text(
+                                                'Image not available',
+                                                style: TextStyle(color: Colors.grey),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
                               ),
                       ),
                     ),
@@ -386,9 +459,9 @@ class _AddBookState extends ConsumerState<AddBook> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      child: const Text(
-                        'Add Book',
-                        style: TextStyle(
+                      child: Text(
+                        _isEditMode ? 'Update Book' : 'Add Book',
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,

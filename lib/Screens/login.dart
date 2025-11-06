@@ -105,7 +105,7 @@ class _LoginState extends ConsumerState<Login> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color.fromARGB(255, 228, 80, 0).withValues(alpha: 0.5),
+                      const Color.fromARGB(255, 5, 101, 179).withValues(alpha: 0.7),
                       Colors.black.withValues(alpha: 1.0)
                     ],
                     begin: Alignment.topCenter,
@@ -154,7 +154,7 @@ class _LoginState extends ConsumerState<Login> {
                               filled: true,
                               fillColor: Colors.white,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(6),
                               ),
                             ),
                             validator: (value) {
@@ -185,7 +185,7 @@ class _LoginState extends ConsumerState<Login> {
                               filled: true,
                               fillColor: Colors.white,
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(6),
                               ),
                             ),
                             validator: (value) {
@@ -201,14 +201,14 @@ class _LoginState extends ConsumerState<Login> {
                             child: ElevatedButton(
                               onPressed: _isLoading ? null : _handleLogin,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+                                backgroundColor: const Color.fromARGB(255, 15, 120, 206),
+                                foregroundColor: const Color.fromARGB(255, 255, 255, 255),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 32,
                                   vertical: 18,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(6),
                                 ),
                                 elevation: 4,
                               ),
@@ -228,80 +228,94 @@ class _LoginState extends ConsumerState<Login> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          TextButton(
-                            onPressed: () async {
-                              // Show dialog to resend verification email
-                              final email = await showDialog<String>(
-                                context: context,
-                                builder: (context) {
-                                  final emailController = TextEditingController();
-                                  return AlertDialog(
-                                    title: const Text('Resend Verification Email'),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Text('Enter your email address to resend the verification email:'),
-                                        const SizedBox(height: 16),
-                                        TextField(
-                                          controller: emailController,
-                                          keyboardType: TextInputType.emailAddress,
-                                          decoration: const InputDecoration(
-                                            labelText: 'Email',
-                                            border: OutlineInputBorder(),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: const Text('Cancel'),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context, emailController.text.trim());
-                                        },
-                                        child: const Text('Send'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
+                          // TextButton(
+                          //   onPressed: () async {
+                          //     // Show dialog to resend verification email
+                          //     final email = await showDialog<String>(
+                          //       context: context,
+                          //       builder: (context) {
+                          //         final emailController = TextEditingController();
+                          //         return AlertDialog(
+                          //           title: const Text('Resend Verification Email'),
+                          //           content: Column(
+                          //             mainAxisSize: MainAxisSize.min,
+                          //             children: [
+                          //               const Text('Enter your email address to resend the verification email:'),
+                          //               const SizedBox(height: 16),
+                          //               TextField(
+                          //                 controller: emailController,
+                          //                 keyboardType: TextInputType.emailAddress,
+                          //                 decoration: const InputDecoration(
+                          //                   labelText: 'Email',
+                          //                   border: OutlineInputBorder(),
+                          //                 ),
+                          //               ),
+                          //             ],
+                          //           ),
+                          //           actions: [
+                          //             TextButton(
+                          //               onPressed: () => Navigator.pop(context),
+                          //               child: const Text('Cancel'),
+                          //             ),
+                          //             ElevatedButton(
+                          //               onPressed: () {
+                          //                 Navigator.pop(context, emailController.text.trim());
+                          //               },
+                          //               child: const Text('Send'),
+                          //             ),
+                          //           ],
+                          //         );
+                          //       },
+                          //     );
 
-                              if (email != null && email.isNotEmpty) {
-                                if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Please try logging in. If your email is not verified, '
-                                        'you\'ll be redirected to the verification screen where you can resend the email.',
-                                      ),
-                                      backgroundColor: Colors.blue,
-                                      duration: Duration(seconds: 4),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                            child: const Text(
-                              'Resend Verification Email',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
+                          //     if (email != null && email.isNotEmpty) {
+                          //       if (mounted) {
+                          //         ScaffoldMessenger.of(context).showSnackBar(
+                          //           const SnackBar(
+                          //             content: Text(
+                          //               'Please try logging in. If your email is not verified, '
+                          //               'you\'ll be redirected to the verification screen where you can resend the email.',
+                          //             ),
+                          //             backgroundColor: Colors.blue,
+                          //             duration: Duration(seconds: 4),
+                          //           ),
+                          //         );
+                          //       }
+                          //     }
+                          //   },
+                          //   child: const Text(
+                          //     'Resend Verification Email',
+                          //     style: TextStyle(
+                          //       color: Colors.white70,
+                          //       fontSize: 12,
+                          //     ),
+                          //   ),
+                          // ),
                           const SizedBox(height: 8),
                           TextButton(
                             onPressed: () {
                               Navigator.pushNamed(context, AppRoutes.signup);
                             },
-                            child: const Text(
-                              'Don\'t have an account? Sign Up',
-                              style: TextStyle(
-                                color: Colors.white,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                const Text(
+                                  'Don\'t have an account?',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  'Sign Up',
+                                  style: TextStyle(
+                                color: Color.fromARGB(255, 2, 131, 224),
                                 fontSize: 14,
-                              ),
+                                fontWeight: FontWeight.bold,
+                                ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

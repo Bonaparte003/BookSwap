@@ -175,7 +175,6 @@ class _BookCard extends ConsumerWidget {
                       Expanded(
                         child: OutlinedButton.icon(
                           onPressed: () {
-                            // TODO: Navigate to edit screen
                             Navigator.pushNamed(
                               context,
                               AppRoutes.addBook,

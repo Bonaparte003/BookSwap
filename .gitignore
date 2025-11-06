@@ -43,3 +43,17 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase configuration files (sensitive - should not be committed)
+# Note: These are included in the repo for this project, but typically should be gitignored
+# Uncomment if you want to exclude them:
+# android/app/google-services.json
+# ios/Runner/GoogleService-Info.plist
+# ios/firebase_app_id_file.json
+# macos/Runner/GoogleService-Info.plist
+
+# Firebase local configuration
+.firebase/
+.firebaserc
+firebase-debug.log
+.firebaserc.local
