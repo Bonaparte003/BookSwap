@@ -1,0 +1,13 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": [
+    {
+      "bucket": "bookswap-fec4c.firebasestorage.app",
+      "rules": "storage.rules"
+    }
+  ]
+}
+

@@ -43,6 +43,19 @@ class AuthService {
     }
   }
 
+  // User changes stream - emits when user logs in/out AND when user profile changes
+  // This is better than authStateChanges because it also emits when emailVerified changes
+  Stream<User?> get userChanges {
+    if (!isFirebaseInitialized) {
+      return Stream.value(null);
+    }
+    try {
+      return auth.userChanges();
+    } catch (e) {
+      return Stream.value(null);
+    }
+  }
+
   // Check if user is logged in
   bool get isLoggedIn {
     return currentUser != null;
@@ -74,6 +87,9 @@ class AuthService {
         }
       }
 
+      // Note: Verification email is sent separately in signup screen
+      // to allow better error handling for rate limiting
+
       return userCredential;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
@@ -96,6 +112,15 @@ class AuthService {
         email: email,
         password: password,
       );
+      
+      // Reload user to get latest verification status
+      // Don't block login - let AuthWrapper handle redirecting unverified users
+      if (userCredential.user != null) {
+        await userCredential.user!.reload();
+        // Force a refresh of the user token to ensure latest verification status
+        await userCredential.user!.getIdToken(true);
+      }
+      
       return userCredential;
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
@@ -111,6 +136,54 @@ class AuthService {
       await auth.signOut();
     } catch (e) {
       // Silently fail if Firebase isn't initialized
+    }
+  }
+
+  // Send email verification
+  Future<void> sendEmailVerification() async {
+    if (!isFirebaseInitialized) return;
+    try {
+      final user = auth.currentUser;
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+      }
+    } catch (e) {
+      throw 'Failed to send verification email: $e';
+    }
+  }
+
+  // Resend email verification
+  Future<void> resendVerificationEmail() async {
+    if (!isFirebaseInitialized) {
+      throw 'Firebase is not initialized.';
+    }
+    try {
+      final user = auth.currentUser;
+      if (user != null) {
+        await user.sendEmailVerification();
+      } else {
+        throw 'No user logged in.';
+      }
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } catch (e) {
+      throw 'Failed to resend verification email: $e';
+    }
+  }
+
+  // Check if current user's email is verified
+  bool isEmailVerified() {
+    final user = currentUser;
+    return user?.emailVerified ?? false;
+  }
+
+  // Reload user to check latest verification status
+  Future<void> reloadUser() async {
+    if (!isFirebaseInitialized) return;
+    try {
+      await auth.currentUser?.reload();
+    } catch (e) {
+      // Silently fail
     }
   }
 

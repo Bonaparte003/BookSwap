@@ -4,9 +4,11 @@ import 'package:bookswap/Firebase/auth_providers.dart';
 import 'package:bookswap/Screens/splashscreen.dart';
 import 'package:bookswap/Screens/login.dart';
 import 'package:bookswap/Screens/home.dart';
+import 'package:bookswap/Screens/email_verification.dart';
 
 /// AuthWrapper uses Riverpod to listen to Firebase auth state changes
-/// - If user is logged in -> shows Home screen
+/// - If user is logged in and email verified -> shows Home screen
+/// - If user is logged in but email not verified -> shows Email Verification screen
 /// - If user is not logged in -> shows Login screen
 /// Firebase automatically tracks login state via authStateChanges stream
 class AuthWrapper extends ConsumerWidget {
@@ -18,12 +20,16 @@ class AuthWrapper extends ConsumerWidget {
 
     return authStateAsync.when(
       data: (user) {
-        // If user exists (logged in), show home screen
         if (user != null) {
+          // Check if email is verified
+          if (!user.emailVerified) {
+            return const EmailVerificationScreen();
+          }
+          // User is logged in and verified
           return const Home();
         }
         // If no user (not logged in), show login screen
-        return Login();
+        return const Login();
       },
       loading: () => const Splashscreen(),
       error: (error, stackTrace) {

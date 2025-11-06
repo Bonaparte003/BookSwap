@@ -48,6 +48,7 @@ class Book {
   final String coverImageUrl;         // URL to the cover image (stored in Firebase Storage)
   final String userId;                // ID of the user who created the listing
   final String userEmail;             // Email of the user who created the listing (for display)
+  final String? swapStatus;           // Swap status: null (available), 'pending', 'swapped'
   final DateTime createdAt;           // When the listing was created
   final DateTime updatedAt;           // When the listing was last updated
 
@@ -59,6 +60,7 @@ class Book {
     required this.coverImageUrl,
     required this.userId,
     required this.userEmail,
+    this.swapStatus,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -75,6 +77,7 @@ class Book {
       coverImageUrl: data['coverImageUrl'] ?? '',
       userId: data['userId'] ?? '',
       userEmail: data['userEmail'] ?? '',
+      swapStatus: data['swapStatus'],
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
@@ -89,6 +92,7 @@ class Book {
       'coverImageUrl': coverImageUrl,
       'userId': userId,
       'userEmail': userEmail,
+      'swapStatus': swapStatus,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
     };
@@ -103,6 +107,7 @@ class Book {
     String? coverImageUrl,
     String? userId,
     String? userEmail,
+    String? swapStatus,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -114,9 +119,11 @@ class Book {
       coverImageUrl: coverImageUrl ?? this.coverImageUrl,
       userId: userId ?? this.userId,
       userEmail: userEmail ?? this.userEmail,
+      swapStatus: swapStatus ?? this.swapStatus,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }
+
 

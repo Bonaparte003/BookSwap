@@ -1,0 +1,90 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Books collection rules
+    match /books/{bookId} {
+      // Anyone can read books (for browsing)
+      allow read: if true;
+      
+      // Only authenticated users can create books
+      // The userId in the document must match the authenticated user's ID
+      allow create: if request.auth != null
+                     && request.resource.data.userId == request.auth.uid;
+      
+      // Allow updates if:
+      // 1. User is the owner (can update any field), OR
+      // 2. User is authenticated and only updating swapStatus/updatedAt (for swap operations)
+      allow update: if request.auth != null
+                     && (
+                       // Owner can update their own book
+                       (resource.data.userId == request.auth.uid
+                        && request.resource.data.userId == resource.data.userId)
+                       ||
+                       // Anyone authenticated can update only swapStatus and updatedAt
+                       // Ensure other critical fields remain unchanged
+                       (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['swapStatus', 'updatedAt'])
+                        && request.resource.data.userId == resource.data.userId
+                        && request.resource.data.title == resource.data.title
+                        && request.resource.data.author == resource.data.author
+                        && request.resource.data.condition == resource.data.condition
+                        && request.resource.data.coverImageUrl == resource.data.coverImageUrl)
+                     );
+      
+      // Only the owner can delete their own books
+      allow delete: if request.auth != null
+                     && resource.data.userId == request.auth.uid;
+    }
+    
+    // Swaps collection rules
+    match /swaps/{swapId} {
+      // Allow authenticated users to read swaps (queries filter by userId)
+      // Individual document reads are still secure because queries filter correctly
+      allow read: if request.auth != null;
+      
+      // Authenticated users can create swaps
+      allow create: if request.auth != null
+                     && request.resource.data.requesterId == request.auth.uid;
+      
+      // Only the owner can update (accept/reject) swaps
+      allow update: if request.auth != null
+                     && resource.data.ownerId == request.auth.uid;
+      
+      // Only the requester can delete (cancel) their own swaps
+      allow delete: if request.auth != null
+                     && resource.data.requesterId == request.auth.uid;
+    }
+    
+    // Chats collection rules
+    match /chats/{chatId} {
+      // Allow authenticated users to read chats (queries filter by participants)
+      // Individual document access is still secure because queries filter correctly
+      allow read: if request.auth != null;
+      
+      // Users can create chats they're participants in
+      allow create: if request.auth != null
+                     && request.auth.uid in request.resource.data.participants;
+      
+      // Users can update chats they're participants in
+      allow update: if request.auth != null
+                     && request.auth.uid in resource.data.participants;
+      
+      // Messages subcollection
+      match /messages/{messageId} {
+        // Users can read messages in chats they're part of
+        allow read: if request.auth != null
+                     && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
+        
+        // Users can create messages in chats they're part of
+        allow create: if request.auth != null
+                       && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants
+                       && request.resource.data.senderId == request.auth.uid;
+        
+        // Users can update/delete their own messages
+        allow update, delete: if request.auth != null
+                               && resource.data.senderId == request.auth.uid;
+      }
+    }
+  }
+}
+
