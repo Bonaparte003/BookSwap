@@ -24,16 +24,28 @@
 <table>
   <tr>
     <td align="center">
+      <img src="images/Login.png" alt="Browse Screen" width="200"/>
+      <br />
+      <b>Login</b>
+    </td>
+    <td align="center">
+      <img src="images/SignUp.png" alt="Browse Screen" width="200"/>
+      <br />
+      <b>Signup</b>
+    </td>
+    <td align="center">
       <img src="images/Browse_Listing.png" alt="Browse Screen" width="200"/>
       <br />
       <b>Browse Books</b>
     </td>
-    <td align="center">
+  </tr>
+  <tr>
+  <td align="center">
       <img src="images/MyListing_Mybooks.png" alt="My Listings" width="200"/>
       <br />
       <b>My Listings - My books</b>
     </td>
-    <td align="center">
+  <td align="center">
       <img src="images/Mylistings_MyOffers.png" alt="My Listings" width="200"/>
       <br />
       <b>My Listings - My Offers</b>
@@ -44,8 +56,8 @@
       <b>Chat Section</b>
     </td>
   </tr>
-  <tr>
-    <td align="center">
+  <tr align="center">
+  <td align="center">
       <img src="images/AddBook.png" alt="Add Book" width="200"/>
       <br />
       <b>Post Book</b>
