@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bookswap/routes/routes.dart';
+import 'package:bookswap/Screens/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 String _getUserInitial(User? user) {
@@ -18,7 +20,7 @@ String _getUserInitial(User? user) {
   return '?';
 }
 
-AppBar topNavigation(BuildContext context, User? user) {
+AppBar topNavigation(BuildContext context, User? user, WidgetRef ref) {
   return AppBar(
     toolbarHeight: 80,
     actionsPadding: EdgeInsets.all(10),
@@ -42,7 +44,12 @@ AppBar topNavigation(BuildContext context, User? user) {
       icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 250, 174, 22)),
     ),
     actions: [
-      Container(
+      GestureDetector(
+        onTap: () {
+          // Navigate to settings tab (index 3)
+          ref.read(selectedTabIndexProvider.notifier).state = 3;
+        },
+        child: Container(
         width: 40,
         height: 40,
         margin: EdgeInsets.all(8),
@@ -51,25 +58,26 @@ AppBar topNavigation(BuildContext context, User? user) {
           border: Border.all(color: Colors.white, width: 2),
         ),
         child: ClipOval(
-          child: (user?.photoURL != null && user!.photoURL!.isNotEmpty)
-              ? Image(
-                  image: NetworkImage(user.photoURL!),
-                  width: double.infinity,
-                  height: double.infinity,
-                  fit: BoxFit.cover,
-                )
-              : CircleAvatar(
-                  radius: 18,
-                  backgroundColor: const Color.fromARGB(255, 190, 190, 190),
-                  child: Text(
-                    _getUserInitial(user),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+            child: (user?.photoURL != null && user!.photoURL!.isNotEmpty)
+                ? Image(
+                    image: NetworkImage(user.photoURL!),
+                    width: double.infinity,
+                    height: double.infinity,
+            fit: BoxFit.cover,
+                  )
+                : CircleAvatar(
+                    radius: 18,
+                    backgroundColor: const Color.fromARGB(255, 190, 190, 190),
+                    child: Text(
+                      _getUserInitial(user),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
+          ),
         ),
       ),
     ],

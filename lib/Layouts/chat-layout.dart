@@ -126,33 +126,33 @@ class _ChatLayoutState extends ConsumerState<ChatLayout> {
             if (filteredChats.isEmpty && chats.isEmpty)
               Expanded(
                 child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.message_outlined,
-                        size: 80,
-                        color: Color.fromARGB(255, 150, 150, 150),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'No chats yet',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Color.fromARGB(255, 100, 100, 100),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Start a swap to begin chatting!',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color.fromARGB(255, 150, 150, 150),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.message_outlined,
+                  size: 80,
+                  color: Color.fromARGB(255, 150, 150, 150),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'No chats yet',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Color.fromARGB(255, 100, 100, 100),
                   ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Start a swap to begin chatting!',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color.fromARGB(255, 150, 150, 150),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
                 ),
               )
             else if (filteredChats.isEmpty && _searchQuery.isNotEmpty)
@@ -191,10 +191,10 @@ class _ChatLayoutState extends ConsumerState<ChatLayout> {
                 child: ListView.builder(
                   padding: EdgeInsets.zero,
                   itemCount: filteredChats.length,
-                  itemBuilder: (context, index) {
+          itemBuilder: (context, index) {
                     final chat = filteredChats[index];
-                    return _ChatCard(chat: chat, currentUserId: currentUser.uid);
-                  },
+            return _ChatCard(chat: chat, currentUserId: currentUser.uid);
+          },
                 ),
               ),
           ],
@@ -261,27 +261,27 @@ class _ChatCard extends ConsumerWidget {
               width: 0.5,
             ),
           ),
-        ),
+      ),
         child: Row(
           children: [
             // Profile Picture
             CircleAvatar(
-              radius: 28,
+          radius: 28,
               backgroundColor: const Color.fromARGB(255, 250, 174, 22),
-              backgroundImage: otherParticipantPhotoURL != null && otherParticipantPhotoURL.isNotEmpty
-                  ? NetworkImage(otherParticipantPhotoURL)
-                  : null,
-              child: otherParticipantPhotoURL == null || otherParticipantPhotoURL.isEmpty
-                  ? Text(
-                      initial,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
+          backgroundImage: otherParticipantPhotoURL != null && otherParticipantPhotoURL.isNotEmpty
+              ? NetworkImage(otherParticipantPhotoURL)
+              : null,
+          child: otherParticipantPhotoURL == null || otherParticipantPhotoURL.isEmpty
+              ? Text(
+                  initial,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
                         fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  : null,
-            ),
+                  ),
+                )
+              : null,
+        ),
             const SizedBox(width: 16),
             // Name and Last Message
             Expanded(
@@ -293,15 +293,15 @@ class _ChatCard extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          displayName,
-                          style: const TextStyle(
+          displayName,
+          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                             color: Color.fromARGB(255, 0, 0, 0),
                           ),
                           overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
+          ),
+        ),
                       if (chat.lastMessageTime != null)
                         Text(
                           _formatTime(chat.lastMessageTime!),
@@ -314,13 +314,13 @@ class _ChatCard extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    chat.lastMessage ?? 'No messages yet',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+          chat.lastMessage ?? 'No messages yet',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],
-                    ),
+                ),
                   ),
                 ],
               ),

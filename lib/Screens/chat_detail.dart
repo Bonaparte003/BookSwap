@@ -108,12 +108,12 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          displayName,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
+                displayName,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
             fontWeight: FontWeight.bold,
-          ),
+            ),
         ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 5, 22, 46),
@@ -205,40 +205,40 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                                 children: [
                                   Container(
                                     margin: const EdgeInsets.only(bottom: 4),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isMe
-                                          ? const Color.fromARGB(255, 250, 174, 22)
-                                          : const Color.fromARGB(255, 5, 22, 46),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isMe
+                              ? const Color.fromARGB(255, 250, 174, 22)
+                              : const Color.fromARGB(255, 5, 22, 46),
                                       borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    constraints: BoxConstraints(
-                                      maxWidth: MediaQuery.of(context).size.width * 0.7,
-                                    ),
+                        ),
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.7,
+                        ),
                                     child: Text(
-                                      message.text,
+                              message.text,
                                       style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                      ),
-                                    ),
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 12),
                                     child: Text(
-                                      _formatTime(message.timestamp),
-                                      style: TextStyle(
+                              _formatTime(message.timestamp),
+                              style: TextStyle(
                                         color: Colors.grey[600],
                                         fontSize: 11,
                                       ),
-                                    ),
-                                  ),
-                                ],
                               ),
                             ),
+                          ],
+                        ),
+                      ),
                             if (isMe) const SizedBox(width: 8),
                           ],
                         ),

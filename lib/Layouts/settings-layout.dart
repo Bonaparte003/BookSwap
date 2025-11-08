@@ -29,6 +29,9 @@ class NotificationsNotifier extends StateNotifier<bool> {
   }
 }
 
+/// Provider for email update preferences
+final emailUpdatesEnabledProvider = StateProvider<bool>((ref) => true);
+
 /// Settings Layout - Shows user settings and profile
 class SettingsLayout extends ConsumerWidget {
   const SettingsLayout({super.key});
@@ -37,6 +40,7 @@ class SettingsLayout extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUserAsync = ref.watch(currentUserStreamProvider);
     final notificationsEnabled = ref.watch(notificationsEnabledProvider);
+    final emailUpdatesEnabled = ref.watch(emailUpdatesEnabledProvider);
     final authService = ref.read(authServiceProvider);
 
     return currentUserAsync.when(
@@ -47,7 +51,7 @@ class SettingsLayout extends ConsumerWidget {
           );
         }
         
-        return _buildSettingsContent(context, ref, currentUser, notificationsEnabled, authService);
+        return _buildSettingsContent(context, ref, currentUser, notificationsEnabled, emailUpdatesEnabled, authService);
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stack) => Center(
@@ -61,49 +65,41 @@ class SettingsLayout extends ConsumerWidget {
     WidgetRef ref,
     currentUser,
     bool notificationsEnabled,
+    bool emailUpdatesEnabled,
     authService,
   ) {
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       children: [
         // Profile Section
-        Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[200]!),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Profile',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Stack(
                       children: [
                         CircleAvatar(
-                          radius: 40,
-                          backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-                          backgroundImage: currentUser.photoURL != null
+                    radius: 50,
+                    backgroundColor: const Color.fromARGB(255, 250, 174, 22),
+                    backgroundImage: currentUser.photoURL != null && currentUser.photoURL!.isNotEmpty
                               ? NetworkImage(currentUser.photoURL!)
                               : null,
-                          child: currentUser.photoURL == null
+                    child: currentUser.photoURL == null || currentUser.photoURL!.isEmpty
                               ? Text(
                                   currentUser.displayName?.substring(0, 1).toUpperCase() ??
                                       currentUser.email?.substring(0, 1).toUpperCase() ??
                                       'U',
                                   style: const TextStyle(
-                                    fontSize: 28,
+                              fontSize: 32,
                                     color: Colors.white,
+                              fontWeight: FontWeight.bold,
                                   ),
                                 )
                               : null,
@@ -111,116 +107,135 @@ class SettingsLayout extends ConsumerWidget {
                         Positioned(
                           bottom: 0,
                           right: 0,
+                    child: GestureDetector(
+                      onTap: () => _changeProfilePicture(context, ref),
                           child: Container(
-                            decoration: const BoxDecoration(
-                              color: Color.fromARGB(255, 0, 0, 0),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 5, 22, 46),
                               shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
                             ),
-                            padding: const EdgeInsets.all(4),
+                        padding: const EdgeInsets.all(6),
                             child: const Icon(
                               Icons.camera_alt,
-                              size: 16,
+                          size: 18,
                               color: Colors.white,
+                        ),
                             ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+              const SizedBox(height: 16),
                           Text(
                             currentUser.displayName ?? 'No name',
                             style: const TextStyle(
-                              fontSize: 18,
+                  fontSize: 20,
                               fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 0, 0, 0),
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             currentUser.email ?? 'No email',
-                            style: const TextStyle(
+                style: TextStyle(
                               fontSize: 14,
-                              color: Color.fromARGB(255, 100, 100, 100),
-                            ),
-                          ),
-                        ],
+                  color: Colors.grey[600],
                       ),
-                    ),
-                  ],
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
-                  child: OutlinedButton.icon(
+                child: OutlinedButton(
                     onPressed: () => _changeProfilePicture(context, ref),
-                    icon: const Icon(Icons.photo_camera),
-                    label: const Text('Change Profile Picture'),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
+                    side: BorderSide(color: Colors.grey[300]!),
+                  ),
+                  child: const Text('Change Profile Picture'),
                   ),
                 ),
               ],
-            ),
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         // Notifications Section
-        Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Notifications',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[200]!),
                 ),
-                const SizedBox(height: 16),
-                Row(
+          child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
                       'Enable Notifications',
-                      style: TextStyle(fontSize: 16),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
                     ),
                     Switch(
                       value: notificationsEnabled,
                       onChanged: (value) {
                         ref.read(notificationsEnabledProvider.notifier).toggle();
                       },
-                      activeThumbColor: const Color.fromARGB(255, 0, 0, 0),
+                      activeTrackColor: const Color.fromARGB(255, 5, 22, 46),
+                      activeThumbColor: const Color.fromARGB(255, 250, 174, 22),
                     ),
                   ],
-                ),
-              ],
-            ),
           ),
         ),
-        const SizedBox(height: 16),
-        // Actions Section
-        Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+        const SizedBox(height: 20),
+        // Email Updates Section
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[200]!),
           ),
-          child: Column(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ListTile(
+              const Text(
+                'Email Updated',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Switch(
+                value: emailUpdatesEnabled,
+                onChanged: (value) {
+                  ref.read(emailUpdatesEnabledProvider.notifier).state = value;
+                },
+                activeTrackColor: const Color.fromARGB(255, 5, 22, 46),
+                activeThumbColor: const Color.fromARGB(255, 250, 174, 22),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        // Log Out Section
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey[200]!),
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 leading: const Icon(Icons.logout, color: Colors.red),
                 title: const Text(
                   'Log Out',
-                  style: TextStyle(color: Colors.red),
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
                 ),
                 onTap: () async {
                   // Show confirmation dialog
@@ -250,7 +265,7 @@ class SettingsLayout extends ConsumerWidget {
                     try {
                       await authService.signOut();
                       if (context.mounted) {
-                        Navigator.pushReplacementNamed(context, AppRoutes.login);
+                    Navigator.pushReplacementNamed(context, AppRoutes.login);
                       }
                     } catch (e) {
                       if (context.mounted) {
@@ -264,8 +279,6 @@ class SettingsLayout extends ConsumerWidget {
                     }
                   }
                 },
-              ),
-            ],
           ),
         ),
       ],
