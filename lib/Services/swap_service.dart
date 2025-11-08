@@ -4,12 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:bookswap/Models/swap.dart';
 import 'package:bookswap/Models/book.dart';
 import 'package:bookswap/Services/chat_service.dart';
+import 'package:bookswap/Services/notification_service.dart';
 
 /// Service class for managing swap offers (CRUD operations)
 class SwapService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final ChatService _chatService = ChatService();
+  final NotificationService _notificationService = NotificationService();
 
   // Collection name in Firestore
   static const String _collectionName = 'swaps';
@@ -84,6 +86,9 @@ class SwapService {
         // Chat creation is optional - users can still chat later
         debugPrint('Note: Chat creation failed (may already exist): $e');
       }
+
+      // Note: Notifications for swap requests are handled by NotificationListener
+      // which watches for new swaps for the book owner
 
       // Return Swap object
       final doc = await docRef.get();

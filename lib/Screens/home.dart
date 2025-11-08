@@ -9,6 +9,7 @@ import 'package:bookswap/Layouts/settings-layout.dart';
 import 'package:bookswap/Screens/my_offers.dart';
 import 'package:bookswap/routes/routes.dart';
 import 'package:bookswap/Firebase/auth_providers.dart';
+import 'package:bookswap/Widgets/notification_listener_widget.dart';
 
 /// Provider for current selected tab index
 final selectedTabIndexProvider = StateProvider<int>((ref) => 0);
@@ -31,44 +32,46 @@ class Home extends ConsumerWidget {
 
     // If MyListings tab is selected, wrap everything in DefaultTabController
     if (selectedIndex == 1) {
-      return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          backgroundColor: const Color.fromARGB(255, 252, 252, 252),
-          appBar: AppBar(
-            title: const Text('My Listings', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-            centerTitle: true,
-            leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 250, 174, 22)),
+      return NotificationListenerWidget(
+        child: DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            backgroundColor: const Color.fromARGB(255, 252, 252, 252),
+            appBar: AppBar(
+              title: const Text('My Listings', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              centerTitle: true,
+              leading: IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 250, 174, 22)),
+              ),
+              backgroundColor: const Color.fromARGB(255, 5, 22, 46),
+              foregroundColor: Colors.white,
+              titleTextStyle: const TextStyle(color: Colors.white),
+              bottom: const TabBar(
+                labelColor: const Color.fromARGB(255, 250, 174, 22),
+                unselectedLabelColor: Colors.white,
+                indicatorColor: const Color.fromARGB(255, 250, 174, 22),
+                tabs: [
+                  Tab(text: 'My Books'),
+                  Tab(text: 'My Offers'),
+                ],
+              ),
             ),
-            backgroundColor: const Color.fromARGB(255, 5, 22, 46),
-            foregroundColor: Colors.white,
-            titleTextStyle: const TextStyle(color: Colors.white),
-            bottom: const TabBar(
-              labelColor: const Color.fromARGB(255, 250, 174, 22),
-              unselectedLabelColor: Colors.white,
-              indicatorColor: const Color.fromARGB(255, 250, 174, 22),
-              tabs: [
-                Tab(text: 'My Books'),
-                Tab(text: 'My Offers'),
-              ],
-            ),
-          ),
-          body: IndexedStack(
-            index: selectedIndex,
-            children: screens,
-          ),
-          bottomNavigationBar: BottomNavigation(context, selectedIndex: selectedIndex),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.addBook);
-            },
-            backgroundColor: const Color.fromARGB(255, 5, 22, 46),
-            child: const Icon(
-              Icons.add,
-              color: Color.fromARGB(255, 255, 255, 255),
-              size: 30,
+      body: IndexedStack(
+        index: selectedIndex,
+        children: screens,
+      ),
+      bottomNavigationBar: BottomNavigation(context, selectedIndex: selectedIndex),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.addBook);
+              },
+              backgroundColor: const Color.fromARGB(255, 5, 22, 46),
+              child: const Icon(
+                Icons.add,
+                color: Color.fromARGB(255, 255, 255, 255),
+                size: 30,
+              ),
             ),
           ),
         ),
@@ -204,27 +207,29 @@ class Home extends ConsumerWidget {
     }
 
     // For other tabs, use the regular topNavigation
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 252, 252, 252),
-      appBar: appBar,
-      body: IndexedStack(
-        index: selectedIndex,
-        children: screens,
-      ),
-      bottomNavigationBar: BottomNavigation(context, selectedIndex: selectedIndex),
-      floatingActionButton: selectedIndex == 0
-          ? FloatingActionButton(
-              onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.addBook);
-              },
-              backgroundColor: const Color.fromARGB(255, 15, 23, 61),
-              child: const Icon(
-                Icons.add,
-                color: Color.fromARGB(255, 255, 255, 255),
+    return NotificationListenerWidget(
+      child: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 252, 252, 252),
+        appBar: appBar,
+        body: IndexedStack(
+          index: selectedIndex,
+          children: screens,
+        ),
+        bottomNavigationBar: BottomNavigation(context, selectedIndex: selectedIndex),
+        floatingActionButton: selectedIndex == 0
+              ? FloatingActionButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.addBook);
+                  },
+                backgroundColor: const Color.fromARGB(255, 15, 23, 61),
+                  child: const Icon(
+                    Icons.add,
+                  color: Color.fromARGB(255, 255, 255, 255),
                     size: 30,
                   ),
                 )
               : null,
+      ),
     );
   }
 }

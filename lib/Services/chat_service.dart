@@ -3,11 +3,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:bookswap/Models/chat.dart';
 import 'package:bookswap/Models/message.dart' as msg;
+import 'package:bookswap/Services/notification_service.dart';
 
 /// Service class for managing chat conversations and messages
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final NotificationService _notificationService = NotificationService();
 
   // Collection names in Firestore
   static const String _chatsCollection = 'chats';
@@ -312,6 +314,9 @@ class ChatService {
         'lastMessageTime': Timestamp.fromDate(now),
         'updatedAt': Timestamp.fromDate(now),
       });
+
+      // Note: Notifications for new messages are handled by NotificationListenerWidget
+      // which watches for new messages in the recipient's chats
 
       final messageDoc = await messageRef.get();
       return msg.Message.fromFirestore(messageDoc);

@@ -151,13 +151,13 @@ class SettingsLayout extends ConsumerWidget {
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     side: BorderSide(color: Colors.grey[300]!),
-                  ),
+                    ),
                   child: const Text('Change Profile Picture'),
                   ),
                 ),
               ],
+            ),
           ),
-        ),
         const SizedBox(height: 20),
         // Notifications Section
         Container(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bookswap/routes/routes.dart';
+import 'package:bookswap/Services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,14 @@ void main() async {
     debugPrint('Stack trace: $stackTrace');
     debugPrint('Note: The google-services.json plugin may not have processed correctly.');
     debugPrint('Try: flutter clean, then flutter pub get, then full rebuild');
+  }
+
+  // Initialize Notification Service
+  try {
+    await NotificationService().initialize();
+    debugPrint('✅ Notification service initialized successfully');
+  } catch (e) {
+    debugPrint('❌ Notification service initialization error: $e');
   }
   
   runApp(
