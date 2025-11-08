@@ -101,46 +101,31 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
         : 'C';
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 253, 230, 193),
+      backgroundColor: const Color.fromARGB(255, 239, 239, 239),
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 250, 174, 22)),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: Colors.white,
-              backgroundImage: otherParticipantPhotoURL != null && otherParticipantPhotoURL.isNotEmpty
-                  ? NetworkImage(otherParticipantPhotoURL)
-                  : null,
-              child: otherParticipantPhotoURL == null || otherParticipantPhotoURL.isEmpty
-                  ? Text(
-                      initial,
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  : null,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                displayName,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
+        title: Text(
+          displayName,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 5, 22, 46),
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            onPressed: () {
+              // TODO: Show menu options
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -172,44 +157,92 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                     final message = messages[index];
                     final isMe = message.senderId == currentUser?.uid;
                     
-                    return Align(
-                      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isMe
-                              ? const Color.fromARGB(255, 250, 174, 22)
-                              : const Color.fromARGB(255, 5, 22, 46),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.7,
-                        ),
-                        child: Column(
+                    // Check if we need to show a date separator
+                    final showDateSeparator = index == 0 || 
+                        _shouldShowDateSeparator(messages[index - 1].timestamp, message.timestamp);
+                    
+                    return Column(
+                      children: [
+                        if (showDateSeparator)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: Text(
+                              _formatDate(message.timestamp),
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
                           children: [
-                            Text(
-                              message.text,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
+                            if (!isMe) ...[
+                              // Profile picture for received messages
+                              CircleAvatar(
+                                radius: 16,
+                                backgroundColor: const Color.fromARGB(255, 250, 174, 22),
+                                backgroundImage: otherParticipantPhotoURL != null && otherParticipantPhotoURL.isNotEmpty
+                                    ? NetworkImage(otherParticipantPhotoURL)
+                                    : null,
+                                child: otherParticipantPhotoURL == null || otherParticipantPhotoURL.isEmpty
+                                    ? Text(
+                                        initial,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    : null,
+                              ),
+                              const SizedBox(width: 8),
+                            ],
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(bottom: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isMe
+                                          ? const Color.fromARGB(255, 250, 174, 22)
+                                          : const Color.fromARGB(255, 5, 22, 46),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    constraints: BoxConstraints(
+                                      maxWidth: MediaQuery.of(context).size.width * 0.7,
+                                    ),
+                                    child: Text(
+                                      message.text,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 12),
+                                    child: Text(
+                                      _formatTime(message.timestamp),
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              _formatTime(message.timestamp),
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 10,
-                              ),
-                            ),
+                            if (isMe) const SizedBox(width: 8),
                           ],
                         ),
-                      ),
+                      ],
                     );
                   },
                 );
@@ -223,15 +256,8 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
           // Message Input
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, -2),
-                ),
-              ],
             ),
             child: Row(
               children: [
@@ -239,14 +265,25 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                   child: TextField(
                     controller: _messageController,
                     decoration: InputDecoration(
-                      hintText: 'Type a message...',
+                      hintText: 'Message',
+                      hintStyle: TextStyle(color: Colors.grey[400]),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        borderSide: const BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey[300]!),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey[400]!),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
-                        vertical: 10,
+                        vertical: 12,
                       ),
                     ),
                     maxLines: null,
@@ -254,14 +291,15 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                     onSubmitted: (_) => _sendMessage(),
                   ),
                 ),
-                const SizedBox(width: 8),
-                IconButton(
+                const SizedBox(width: 12),
+                TextButton(
                   onPressed: _sendMessage,
-                  icon: const Icon(Icons.send),
-                  color: const Color.fromARGB(255, 0, 0, 0),
-                  style: IconButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 220, 187, 133),
-                    padding: const EdgeInsets.all(12),
+                  child: const Text(
+                    'Send',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 100, 100, 100),
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ],
@@ -272,20 +310,26 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
     );
   }
 
-  String _formatTime(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
+  String _formatDate(DateTime dateTime) {
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return '${months[dateTime.month - 1]} ${dateTime.day}';
+  }
 
-    if (difference.inDays == 0) {
-      // Today - show time
-      return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-    } else if (difference.inDays == 1) {
-      return 'Yesterday';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
-    } else {
-      return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
-    }
+  String _formatTime(DateTime dateTime) {
+    final hour = dateTime.hour;
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
+    return '$displayHour:$minute $period';
+  }
+
+  bool _shouldShowDateSeparator(DateTime previousDate, DateTime currentDate) {
+    return previousDate.year != currentDate.year ||
+        previousDate.month != currentDate.month ||
+        previousDate.day != currentDate.day;
   }
 }
 
