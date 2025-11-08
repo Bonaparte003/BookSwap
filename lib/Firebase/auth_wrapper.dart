@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bookswap/Firebase/auth_providers.dart';
-import 'package:bookswap/Screens/splashscreen.dart';
 import 'package:bookswap/Screens/login.dart';
 import 'package:bookswap/Screens/home.dart';
 import 'package:bookswap/Screens/email_verification.dart';
@@ -31,7 +30,11 @@ class AuthWrapper extends ConsumerWidget {
         // If no user (not logged in), show login screen
         return const Login();
       },
-      loading: () => const Splashscreen(),
+      loading: () => const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
       error: (error, stackTrace) {
         // On error, show login screen (better than crashing)
         debugPrint('Auth state error: $error');

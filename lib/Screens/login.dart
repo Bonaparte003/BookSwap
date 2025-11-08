@@ -60,7 +60,7 @@ class _LoginState extends ConsumerState<Login> {
           } else {
             // Navigate to email verification screen
             // First navigate to root to ensure AuthWrapper is in tree, then it will show EmailVerificationScreen
-            Navigator.pushReplacementNamed(context, AppRoutes.splash);
+            Navigator.pushReplacementNamed(context, AppRoutes.login);
           }
         }
       }

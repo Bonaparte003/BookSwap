@@ -250,7 +250,7 @@ class SettingsLayout extends ConsumerWidget {
                     try {
                       await authService.signOut();
                       if (context.mounted) {
-                        Navigator.pushReplacementNamed(context, AppRoutes.splash);
+                        Navigator.pushReplacementNamed(context, AppRoutes.login);
                       }
                     } catch (e) {
                       if (context.mounted) {

@@ -9,8 +9,7 @@ import 'package:bookswap/Models/chat.dart';
 import 'package:bookswap/Models/book.dart';
 
 class AppRoutes {
-  static const String splash = '/';
-  static const String login = '/login';
+  static const String login = '/';
   static const String signup = '/signup';
   static const String home = '/home';
   static const String addBook = '/add-book';
@@ -19,8 +18,6 @@ class AppRoutes {
 
 Route generateRoute(RouteSettings settings) {
   switch (settings.name) {
-    case AppRoutes.splash:
-      return MaterialPageRoute(builder: (_) => const AuthWrapper());
     case AppRoutes.login:
       return MaterialPageRoute(builder: (_) => const Login());
     case AppRoutes.signup:
