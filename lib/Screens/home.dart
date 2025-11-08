@@ -8,6 +8,7 @@ import 'package:bookswap/Layouts/chat-layout.dart';
 import 'package:bookswap/Layouts/settings-layout.dart';
 import 'package:bookswap/Screens/my_offers.dart';
 import 'package:bookswap/routes/routes.dart';
+import 'package:bookswap/Firebase/auth_providers.dart';
 
 /// Provider for current selected tab index
 final selectedTabIndexProvider = StateProvider<int>((ref) => 0);
@@ -18,6 +19,7 @@ class Home extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedIndex = ref.watch(selectedTabIndexProvider);
+    final user = ref.watch(currentUserProvider);
 
     // List of screens to display
     final screens = [
@@ -27,23 +29,54 @@ class Home extends ConsumerWidget {
       const SettingsScreen(),
     ];
 
+    // Conditional appBar based on selected tab
+    PreferredSizeWidget? appBar;
+    if (selectedIndex == 1) {
+      // MyListingsScreen has its own appBar with tabs
+      appBar = AppBar(
+        title: const Text('My Listings'),
+        backgroundColor: const Color.fromARGB(255, 53, 77, 197),
+        foregroundColor: Colors.white,
+        titleTextStyle: const TextStyle(color: Colors.white),
+        bottom: const TabBar(
+          labelColor: Color.fromARGB(255, 220, 187, 133),
+          unselectedLabelColor: Colors.white,
+          indicatorColor: Color.fromARGB(255, 220, 187, 133),
+          tabs: [
+            Tab(text: 'My Books'),
+            Tab(text: 'My Offers'),
+          ],
+        ),
+      );
+    } else {
+      appBar = topNavigation(context, user);
+    }
+
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 253, 230, 193),
-      appBar: topNavigation(context),
-      body: IndexedStack(
-        index: selectedIndex,
-        children: screens,
-      ),
+      backgroundColor: const Color.fromARGB(255, 252, 252, 252),
+      appBar: appBar,
+      body: selectedIndex == 1
+          ? DefaultTabController(
+              length: 2,
+              child: IndexedStack(
+                index: selectedIndex,
+                children: screens,
+              ),
+            )
+          : IndexedStack(
+              index: selectedIndex,
+              children: screens,
+            ),
       bottomNavigationBar: BottomNavigation(context, selectedIndex: selectedIndex),
       floatingActionButton: selectedIndex == 0
           ? FloatingActionButton(
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.addBook);
               },
-                backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                backgroundColor: const Color.fromARGB(255, 15, 23, 61),
               child: const Icon(
                 Icons.add,
-                color: Color.fromARGB(255, 220, 187, 133),
+                color: Color.fromARGB(255, 255, 255, 255),
                 size: 30,
               ),
             )
@@ -80,30 +113,13 @@ class MyListingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 253, 230, 193),
-        appBar: AppBar(
-          title: const Text('My Listings'),
-          backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-          foregroundColor: Colors.white,
-          bottom: const TabBar(
-            labelColor: Color.fromARGB(255, 220, 187, 133),
-            unselectedLabelColor: Colors.white,
-            indicatorColor: Color.fromARGB(255, 220, 187, 133),
-            tabs: [
-              Tab(text: 'My Books'),
-              Tab(text: 'My Offers'),
+    return Container(
+      color: const Color.fromARGB(255, 253, 230, 193),
+      child: const TabBarView(
+        children: [
+          ListingLayout(),
+          MyOffersScreen(),
         ],
-          ),
-        ),
-        body: const TabBarView(
-          children: [
-            ListingLayout(),
-            MyOffersScreen(),
-          ],
-        ),
       ),
     );
   }

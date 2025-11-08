@@ -14,7 +14,7 @@ class BottomNavigation extends ConsumerWidget {
     child: Container(
       height: MediaQuery.of(context).size.height * 0.09,
       decoration: const BoxDecoration(
-        color: Color.fromARGB(255, 0, 0, 0),
+        color: Color.fromARGB(255, 7, 7, 42),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -76,18 +76,18 @@ class _NavItem extends StatelessWidget {
             Icon(
               icon,
               color: isSelected
-                  ? const Color.fromARGB(255, 220, 187, 133)
-                  : Colors.white,
-              size: 24,
+                  ? Colors.white
+                  : const Color.fromARGB(255, 150, 150, 150),
+              size: isSelected ? 26 : 24,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
                 color: isSelected
-                    ? const Color.fromARGB(255, 220, 187, 133)
-                    : Colors.white,
-                fontSize: 12,
+                    ? Colors.white
+                    : const Color.fromARGB(255, 150, 150, 150),
+                fontSize: isSelected ? 14 : 12,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),

@@ -1,11 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:bookswap/routes/routes.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-AppBar topNavigation(BuildContext context) {
+String _getUserInitial(User? user) {
+  if (user == null) return '?';
+  
+  // Try displayName first
+  if (user.displayName != null && user.displayName!.isNotEmpty) {
+    return user.displayName!.substring(0, 1).toUpperCase();
+  }
+  
+  // Fall back to email
+  if (user.email != null && user.email!.isNotEmpty) {
+    return user.email!.substring(0, 1).toUpperCase();
+  }
+  
+  return '?';
+}
+
+AppBar topNavigation(BuildContext context, User? user) {
   return AppBar(
     toolbarHeight: 80,
     actionsPadding: EdgeInsets.all(10),
-    backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+    backgroundColor: const Color.fromARGB(255, 5, 22, 46),
+    titleTextStyle: TextStyle(color: Colors.white),
+    title: Text('Browse Listings', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+    centerTitle: true,
     leading: IconButton(
       onPressed: () async {
         if (context.mounted) {
@@ -19,7 +39,7 @@ AppBar topNavigation(BuildContext context) {
           );
         }
       },
-      icon: Icon(Icons.menu_book, color: Colors.white),
+      icon: Icon(Icons.arrow_back, color: Colors.white),
     ),
     actions: [
       Container(
@@ -31,12 +51,25 @@ AppBar topNavigation(BuildContext context) {
           border: Border.all(color: Colors.white, width: 2),
         ),
         child: ClipOval(
-          child: Image(
-            image: AssetImage('assets/images/books.jpg'),
-            width: 30,
-            height: 30,
-            fit: BoxFit.cover,
-          ),
+          child: (user?.photoURL != null && user!.photoURL!.isNotEmpty)
+              ? Image(
+                  image: NetworkImage(user.photoURL!),
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                )
+              : CircleAvatar(
+                  radius: 18,
+                  backgroundColor: const Color.fromARGB(255, 190, 190, 190),
+                  child: Text(
+                    _getUserInitial(user),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
         ),
       ),
     ],
