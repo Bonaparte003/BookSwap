@@ -20,7 +20,8 @@ class Home extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedIndex = ref.watch(selectedTabIndexProvider);
-    final user = ref.watch(currentUserProvider);
+    final userAsync = ref.watch(currentUserStreamProvider);
+    final user = userAsync.value; // Get current value from stream
 
     // List of screens to display
     final screens = [

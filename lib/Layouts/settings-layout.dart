@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:bookswap/Firebase/auth_providers.dart';
 import 'package:bookswap/Services/profile_providers.dart';
+import 'package:bookswap/Screens/home.dart';
+import 'package:bookswap/Services/notification_listener.dart';
 import 'package:bookswap/routes/routes.dart';
 import 'dart:io';
 
@@ -263,9 +266,25 @@ class SettingsLayout extends ConsumerWidget {
 
                   if (confirmed == true) {
                     try {
+                      // Clear all user-specific data before signing out
+                      await _clearUserData(ref);
+                      
                       await authService.signOut();
+                      
+                      // Invalidate all providers to clear cached data
+                      ref.invalidate(authStateChangesProvider);
+                      ref.invalidate(currentUserStreamProvider);
+                      ref.invalidate(currentUserProvider);
+                      ref.invalidate(selectedTabIndexProvider);
+                      ref.invalidate(notificationsEnabledProvider);
+                      ref.invalidate(emailUpdatesEnabledProvider);
+                      
+                      // Clear notification listener state
+                      ref.invalidate(lastSeenSwapIdsProvider);
+                      ref.invalidate(lastSeenMessageIdsProvider);
+                      
                       if (context.mounted) {
-                    Navigator.pushReplacementNamed(context, AppRoutes.login);
+                        Navigator.pushReplacementNamed(context, AppRoutes.login);
                       }
                     } catch (e) {
                       if (context.mounted) {
@@ -283,6 +302,20 @@ class SettingsLayout extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  /// Clear all user-specific data on logout
+  Future<void> _clearUserData(WidgetRef ref) async {
+    try {
+      // Clear SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      
+      // Note: Riverpod providers will be invalidated separately
+      // This ensures all cached data is cleared
+    } catch (e) {
+      debugPrint('Error clearing user data: $e');
+    }
   }
 
   Future<void> _changeProfilePicture(BuildContext context, WidgetRef ref) async {
@@ -342,8 +375,9 @@ class SettingsLayout extends ConsumerWidget {
       final user = ref.read(authServiceProvider).currentUser;
       if (user != null) {
         await user.reload();
-        // Invalidate the stream provider to force a refresh
+        // Invalidate both stream providers to force a refresh everywhere
         ref.invalidate(currentUserStreamProvider);
+        ref.invalidate(authStateChangesProvider);
       }
 
       if (context.mounted) {
