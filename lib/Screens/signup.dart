@@ -130,8 +130,8 @@ class _SignupState extends State<Signup> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      const Color.fromARGB(255, 5, 101, 179).withValues(alpha: 0.7),
-                      Colors.black.withValues(alpha: 1.0)
+                      Color.fromARGB(255, 7, 7, 42),
+                      Color.fromARGB(255, 7, 7, 42).withValues(alpha: 0.9),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -165,6 +165,7 @@ class _SignupState extends State<Signup> {
                             controller: _firstNameController,
                             decoration: InputDecoration(
                               labelText: 'First Name',
+                              floatingLabelBehavior: FloatingLabelBehavior.never,
                               prefixIcon: const Icon(Icons.person),
                               filled: true,
                               fillColor: Colors.white,
@@ -179,6 +180,7 @@ class _SignupState extends State<Signup> {
                             controller: _lastNameController,
                             decoration: InputDecoration(
                               labelText: 'Last Name',
+                              floatingLabelBehavior: FloatingLabelBehavior.never,
                               prefixIcon: const Icon(Icons.person_outline),
                               filled: true,
                               fillColor: Colors.white,
@@ -194,6 +196,7 @@ class _SignupState extends State<Signup> {
                             keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                               labelText: 'Email',
+                              floatingLabelBehavior: FloatingLabelBehavior.never,
                               prefixIcon: const Icon(Icons.email),
                               filled: true,
                               fillColor: Colors.white,
@@ -217,6 +220,7 @@ class _SignupState extends State<Signup> {
                             obscureText: _obscurePassword,
                             decoration: InputDecoration(
                               labelText: 'Password',
+                              floatingLabelBehavior: FloatingLabelBehavior.never,
                               prefixIcon: const Icon(Icons.lock),
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -248,6 +252,7 @@ class _SignupState extends State<Signup> {
                             obscureText: _obscureConfirmPassword,
                             decoration: InputDecoration(
                               labelText: 'Confirm Password',
+                              floatingLabelBehavior: FloatingLabelBehavior.never,
                               prefixIcon: const Icon(Icons.lock_outline),
                               suffixIcon: IconButton(
                                 icon: Icon(
@@ -279,8 +284,8 @@ class _SignupState extends State<Signup> {
                             child: ElevatedButton(
                               onPressed: _isLoading ? null : _handleSignup,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color.fromARGB(255, 15, 120, 206),
-                                foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                                backgroundColor: const Color.fromARGB(255, 250, 174, 22),
+                                foregroundColor: const Color.fromARGB(255, 0, 0, 0),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 32,
                                   vertical: 18,
@@ -324,7 +329,7 @@ class _SignupState extends State<Signup> {
                                 const Text(
                                   'Sign In',
                                   style: TextStyle(
-                                    color: Color.fromARGB(255, 2, 131, 224),
+                                    color: const Color.fromARGB(255, 250, 174, 22),
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
                                   ),
