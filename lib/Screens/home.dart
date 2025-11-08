@@ -29,70 +29,69 @@ class Home extends ConsumerWidget {
       const SettingsScreen(),
     ];
 
-    // Conditional appBar based on selected tab
-    PreferredSizeWidget? appBar;
+    // If MyListings tab is selected, wrap everything in DefaultTabController
     if (selectedIndex == 1) {
-      // MyListingsScreen has its own appBar with tabs
-      appBar = AppBar(
-        title: const Text('My Listings'),
-        backgroundColor: const Color.fromARGB(255, 53, 77, 197),
-        foregroundColor: Colors.white,
-        titleTextStyle: const TextStyle(color: Colors.white),
-        bottom: const TabBar(
-          labelColor: Color.fromARGB(255, 220, 187, 133),
-          unselectedLabelColor: Colors.white,
-          indicatorColor: Color.fromARGB(255, 220, 187, 133),
-          tabs: [
-            Tab(text: 'My Books'),
-            Tab(text: 'My Offers'),
-          ],
+      return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          backgroundColor: const Color.fromARGB(255, 252, 252, 252),
+          appBar: AppBar(
+            title: const Text('My Listings'),
+            backgroundColor: const Color.fromARGB(255, 5, 22, 46),
+            foregroundColor: Colors.white,
+            titleTextStyle: const TextStyle(color: Colors.white),
+            bottom: const TabBar(
+              labelColor: Color.fromARGB(255, 220, 187, 133),
+              unselectedLabelColor: Colors.white,
+              indicatorColor: Color.fromARGB(255, 220, 187, 133),
+              tabs: [
+                Tab(text: 'My Books'),
+                Tab(text: 'My Offers'),
+              ],
+            ),
+          ),
+          body: IndexedStack(
+            index: selectedIndex,
+            children: screens,
+          ),
+          bottomNavigationBar: BottomNavigation(context, selectedIndex: selectedIndex),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.addBook);
+            },
+            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+            child: const Icon(
+              Icons.add,
+              color: Color.fromARGB(255, 220, 187, 133),
+              size: 30,
+            ),
+          ),
         ),
       );
-    } else {
-      appBar = topNavigation(context, user);
     }
 
+    // For other tabs, use the regular topNavigation
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 252, 252, 252),
-      appBar: appBar,
-      body: selectedIndex == 1
-          ? DefaultTabController(
-              length: 2,
-              child: IndexedStack(
-                index: selectedIndex,
-                children: screens,
-              ),
-            )
-          : IndexedStack(
-              index: selectedIndex,
-              children: screens,
-            ),
+      appBar: topNavigation(context, user),
+      body: IndexedStack(
+        index: selectedIndex,
+        children: screens,
+      ),
       bottomNavigationBar: BottomNavigation(context, selectedIndex: selectedIndex),
       floatingActionButton: selectedIndex == 0
           ? FloatingActionButton(
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.addBook);
               },
-                backgroundColor: const Color.fromARGB(255, 15, 23, 61),
+              backgroundColor: const Color.fromARGB(255, 15, 23, 61),
               child: const Icon(
                 Icons.add,
                 color: Color.fromARGB(255, 255, 255, 255),
                 size: 30,
               ),
             )
-          : selectedIndex == 1
-              ? FloatingActionButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.addBook);
-                  },
-                  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                  child: const Icon(
-                    Icons.add,
-                    color: Color.fromARGB(255, 220, 187, 133),
-                    size: 30,
-                  ),
-                )
-              : null,
+          : null,
     );
   }
 }

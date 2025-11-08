@@ -39,7 +39,7 @@ AppBar topNavigation(BuildContext context, User? user) {
           );
         }
       },
-      icon: Icon(Icons.arrow_back, color: Colors.white),
+      icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 250, 174, 22)),
     ),
     actions: [
       Container(

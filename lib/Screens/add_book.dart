@@ -4,6 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:bookswap/Models/book.dart';
 import 'package:bookswap/Services/book_providers.dart';
+import 'package:bookswap/Layouts/bottom-navigation.dart';
+import 'package:bookswap/Screens/home.dart';
 
 class AddBook extends ConsumerStatefulWidget {
   final Book? book; // If provided, we're in edit mode
@@ -253,16 +255,20 @@ class _AddBookState extends ConsumerState<AddBook> {
 
   @override
   Widget build(BuildContext context) {
+    // Get current selected tab index, default to 0 (Browse)
+    final selectedIndex = ref.watch(selectedTabIndexProvider);
+    
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 253, 230, 193),
+      backgroundColor: const Color.fromARGB(255, 243, 243, 243),
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        backgroundColor: const Color.fromARGB(255, 5, 22, 46),
         title: Text(
-          _isEditMode ? 'Edit Book' : 'Add New Book',
-          style: const TextStyle(color: Colors.white),
+          _isEditMode ? 'Edit Book' : 'Post a Book',
+          style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: const Color.fromARGB(255, 250, 174, 22)),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -454,17 +460,17 @@ class _AddBookState extends ConsumerState<AddBook> {
                       onPressed: _isLoading ? null : _submitForm,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: const Color.fromARGB(255, 231, 101, 1),
+                        backgroundColor: const Color.fromARGB(255, 250, 174, 22),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                       child: Text(
-                        _isEditMode ? 'Update Book' : 'Add Book',
+                        _isEditMode ? 'Update Book' : 'Post',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Color.fromARGB(255, 0, 0, 0),
                         ),
                       ),
                     ),
@@ -472,6 +478,10 @@ class _AddBookState extends ConsumerState<AddBook> {
                 ),
               ),
             ),
+      bottomNavigationBar: BottomNavigation(
+        context,
+        selectedIndex: selectedIndex,
+      ),
     );
   }
 }
