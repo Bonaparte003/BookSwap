@@ -1,11 +1,31 @@
+//
+// BOOK MODEL
+//
+// 
+// Data model representing a book listing in the app.
+// 
+// STORAGE:
+// - Stored in Cloud Firestore collection: 'books'
+// - Cover images stored in Firebase Storage: 'book_covers/{userId}/{timestamp}.jpg'
+// 
+// USAGE:
+// - Created when user adds a new book listing
+// - Displayed in Browse screen (all books) and My Listings screen (user's books)
+// - Used in swap requests (users can request to swap for a book)
+// 
+//
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Book Condition Enum
+// Book condition enum
+// 
+// Represents the physical condition of a book.
+// Used when creating/editing book listings.
 enum BookCondition {
-  newBook,    // New
-  likeNew,    // Like New
-  good,       // Good
-  used,       // Used
+  newBook,    // New - book is brand new
+  likeNew,    // Like New - barely used, looks new
+  good,       // Good - some wear but still in good condition
+  used,       // Used - noticeable wear but functional
 }
 
 /// Extension to convert enum to/from string
@@ -39,18 +59,44 @@ extension BookConditionExtension on BookCondition {
   }
 }
 
-/// Book Model representing a book listing
+// Book model representing a book listing
+// 
+// This is the main data model for books in the app.
+// Each book listing belongs to a user and can be swapped with other users.
 class Book {
-  final String id;                    // Document ID from Firestore
-  final String title;                 // Book title
-  final String author;                // Book author
-  final BookCondition condition;      // Book condition (New, Like New, Good, Used)
-  final String coverImageUrl;         // URL to the cover image (stored in Firebase Storage)
-  final String userId;                // ID of the user who created the listing
-  final String userEmail;             // Email of the user who created the listing (for display)
-  final String? swapStatus;           // Swap status: null (available), 'pending', 'swapped'
-  final DateTime createdAt;           // When the listing was created
-  final DateTime updatedAt;           // When the listing was last updated
+  // Document ID from Firestore (unique identifier)
+  final String id;
+  
+  // Book title (e.g., "The Great Gatsby")
+  final String title;
+  
+  // Book author (e.g., "F. Scott Fitzgerald")
+  final String author;
+  
+  // Physical condition of the book (New, Like New, Good, Used)
+  final BookCondition condition;
+  
+  // URL to the cover image (stored in Firebase Storage)
+  // Format: book_covers/{userId}/{timestamp}.jpg
+  final String coverImageUrl;
+  
+  // ID of the user who created this listing (Firebase Auth UID)
+  final String userId;
+  
+  // Email of the user who created the listing (for display purposes)
+  final String userEmail;
+  
+  // Swap status of the book:
+  // - null: Available for swapping
+  // - 'pending': Has a pending swap request
+  // - 'swapped': Already swapped with another user
+  final String? swapStatus;
+  
+  // Timestamp when the listing was created
+  final DateTime createdAt;
+  
+  // Timestamp when the listing was last updated
+  final DateTime updatedAt;
 
   Book({
     required this.id,
@@ -65,7 +111,7 @@ class Book {
     required this.updatedAt,
   });
 
-  /// Create a Book from a Firestore document
+  // Create a Book from a Firestore document
   factory Book.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     
@@ -98,7 +144,7 @@ class Book {
     };
   }
 
-  /// Create a copy of this Book with updated fields
+  // Create a copy of this Book with updated fields
   Book copyWith({
     String? id,
     String? title,

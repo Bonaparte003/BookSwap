@@ -1,16 +1,46 @@
+//
+/// AUTHENTICATION PROVIDERS
+//
+// 
+// Riverpod providers for Firebase Authentication.
+// 
+// PROVIDERS:
+// - authServiceProvider: Singleton instance of AuthService
+// - authStateChangesProvider: Stream of auth state changes (login/logout/verification)
+// - currentUserStreamProvider: Stream of current user (simpler than authStateChanges)
+// - currentUserProvider: Synchronous access to current user
+// - isLoggedInProvider: Boolean indicating if user is logged in
+// 
+// USAGE:
+//   final user = ref.watch(currentUserStreamProvider);
+//   final isLoggedIn = ref.watch(isLoggedInProvider);
+// 
+//
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bookswap/Firebase/auth_service.dart';
 
 // Provider for AuthService instance (singleton)
+// 
+// Provides a single instance of AuthService throughout the app.
+// Used by other auth providers to access Firebase Auth.
 final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService();
 });
 
 // StreamProvider that listens to Firebase auth state changes
-// Uses userChanges() instead of authStateChanges() because userChanges() also emits
-// when user profile changes (like email verification status)
-// This automatically updates when user logs in/out AND when email verification status changes
+// 
+// IMPORTANT: Uses userChanges() instead of authStateChanges() because:
+// - userChanges() emits when user profile changes (like email verification status)
+// - authStateChanges() only emits on login/logout
+// 
+// This ensures the app automatically updates when:
+// - User logs in/out
+// - Email verification status changes
+// - User profile is updated
+// 
+// Returns: StreamProvider<User?> - emits User when logged in, null when logged out
 final authStateChangesProvider = StreamProvider<User?>((ref) async* {
   final authService = ref.watch(authServiceProvider);
   
@@ -86,19 +116,32 @@ final authStateChangesProvider = StreamProvider<User?>((ref) async* {
 });
 
 // StreamProvider for current user - updates automatically when profile changes
-// Uses userChanges() to also catch email verification status updates
+// 
+// Simpler version of authStateChangesProvider.
+// Uses userChanges() to catch email verification status updates.
+// 
+// Returns: StreamProvider<User?> - emits User when logged in, null when logged out
 final currentUserStreamProvider = StreamProvider<User?>((ref) {
   final authService = ref.watch(authServiceProvider);
   return authService.userChanges;
 });
 
-// Provider for current user (synchronous access - uses stream's latest value)
+// Provider for current user (synchronous access)
+// 
+// Provides immediate access to current user without waiting for stream.
+// Uses the latest value from Firebase Auth.
+// 
+// Returns: Provider<User?> - current user or null if not logged in
 final currentUserProvider = Provider<User?>((ref) {
   final authService = ref.watch(authServiceProvider);
   return authService.currentUser;
 });
 
 // Provider to check if user is logged in
+// 
+// Convenience provider that returns true if user is logged in, false otherwise.
+// 
+// Returns: Provider<bool> - true if logged in, false otherwise
 final isLoggedInProvider = Provider<bool>((ref) {
   final currentUser = ref.watch(currentUserProvider);
   return currentUser != null;
