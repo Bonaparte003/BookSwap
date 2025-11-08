@@ -35,22 +35,10 @@ class ListingLayout extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  'No books listed yet',
+                  'No books posted yet',
                   style: TextStyle(
                     fontSize: 18,
                     color: Color.fromARGB(255, 100, 100, 100),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.addBook);
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Your First Book'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-                    foregroundColor: Colors.white,
                   ),
                 ),
               ],

@@ -36,14 +36,19 @@ class Home extends ConsumerWidget {
         child: Scaffold(
           backgroundColor: const Color.fromARGB(255, 252, 252, 252),
           appBar: AppBar(
-            title: const Text('My Listings'),
+            title: const Text('My Listings', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+            centerTitle: true,
+            leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 250, 174, 22)),
+            ),
             backgroundColor: const Color.fromARGB(255, 5, 22, 46),
             foregroundColor: Colors.white,
             titleTextStyle: const TextStyle(color: Colors.white),
             bottom: const TabBar(
-              labelColor: Color.fromARGB(255, 220, 187, 133),
+              labelColor: const Color.fromARGB(255, 250, 174, 22),
               unselectedLabelColor: Colors.white,
-              indicatorColor: Color.fromARGB(255, 220, 187, 133),
+              indicatorColor: const Color.fromARGB(255, 250, 174, 22),
               tabs: [
                 Tab(text: 'My Books'),
                 Tab(text: 'My Offers'),
@@ -59,10 +64,10 @@ class Home extends ConsumerWidget {
             onPressed: () {
               Navigator.pushNamed(context, AppRoutes.addBook);
             },
-            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+            backgroundColor: const Color.fromARGB(255, 5, 22, 46),
             child: const Icon(
               Icons.add,
-              color: Color.fromARGB(255, 220, 187, 133),
+              color: Color.fromARGB(255, 255, 255, 255),
               size: 30,
             ),
           ),
@@ -113,7 +118,7 @@ class MyListingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color.fromARGB(255, 253, 230, 193),
+      color: const Color.fromARGB(255, 248, 248, 248),
       child: const TabBarView(
         children: [
           ListingLayout(),

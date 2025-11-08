@@ -481,7 +481,7 @@ class _AddBookState extends ConsumerState<AddBook> {
       bottomNavigationBar: BottomNavigation(
         context,
         selectedIndex: selectedIndex,
-      ),
+            ),
     );
   }
 }
