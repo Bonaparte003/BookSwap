@@ -7,29 +7,28 @@ import 'package:bookswap/Services/notification_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Firebase
+
   try {
-    // Check if Firebase apps are already initialized (in case of hot restart)
+
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp();
-      debugPrint('✅ Firebase initialized successfully');
+      debugPrint('Firebase initialized successfully');
     } else {
-      debugPrint('✅ Firebase already initialized');
+      debugPrint(' Firebase already initialized');
     }
   } catch (e, stackTrace) {
     // Firebase initialization failed
-    debugPrint('❌ Firebase initialization error: $e');
+    debugPrint(' Firebase initialization error: $e');
     debugPrint('Stack trace: $stackTrace');
     debugPrint('Note: The google-services.json plugin may not have processed correctly.');
     debugPrint('Try: flutter clean, then flutter pub get, then full rebuild');
   }
 
-  // Initialize Notification Service
   try {
     await NotificationService().initialize();
-    debugPrint('✅ Notification service initialized successfully');
+    debugPrint('Notification service initialized successfully');
   } catch (e) {
-    debugPrint('❌ Notification service initialization error: $e');
+    debugPrint('Notification service initialization error: $e');
   }
   
   runApp(

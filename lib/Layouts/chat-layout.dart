@@ -59,15 +59,17 @@ class _ChatLayoutState extends ConsumerState<ChatLayout> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = ref.watch(currentUserProvider);
+    final currentUserAsync = ref.watch(currentUserStreamProvider);
 
-    if (currentUser == null) {
-      return const Center(
-        child: Text('Please log in to view chats'),
-      );
-    }
+    return currentUserAsync.when(
+      data: (currentUser) {
+        if (currentUser == null) {
+          return const Center(
+            child: Text('Please log in to view chats'),
+          );
+        }
 
-    final userChatsAsync = ref.watch(userChatsProvider(currentUser.uid));
+        final userChatsAsync = ref.watch(userChatsProvider(currentUser.uid));
 
     return userChatsAsync.when(
       data: (chats) {
@@ -203,6 +205,12 @@ class _ChatLayoutState extends ConsumerState<ChatLayout> {
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, stackTrace) => Center(
         child: Text('Error: $error'),
+      ),
+    );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(
+        child: Text('Error loading user: $error'),
       ),
     );
   }

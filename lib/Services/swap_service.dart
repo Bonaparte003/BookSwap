@@ -4,14 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:bookswap/Models/swap.dart';
 import 'package:bookswap/Models/book.dart';
 import 'package:bookswap/Services/chat_service.dart';
-import 'package:bookswap/Services/notification_service.dart';
 
 /// Service class for managing swap offers (CRUD operations)
 class SwapService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final ChatService _chatService = ChatService();
-  final NotificationService _notificationService = NotificationService();
 
   // Collection name in Firestore
   static const String _collectionName = 'swaps';
@@ -43,6 +41,7 @@ class SwapService {
     }
 
     try {
+      debugPrint('SwapService: Starting swap creation');
       final now = DateTime.now();
       final swapData = {
         'bookId': bookId,
@@ -56,11 +55,14 @@ class SwapService {
       };
 
       // Create swap document
+      debugPrint('SwapService: Creating swap document in Firestore...');
       final DocumentReference docRef = await _firestore
           .collection(_collectionName)
           .add(swapData);
+      debugPrint('SwapService: Swap document created with ID: ${docRef.id}');
 
       // Update book status to pending
+      debugPrint('SwapService: Updating book status to pending...');
       await _firestore
           .collection('books')
           .doc(bookId)
@@ -68,31 +70,45 @@ class SwapService {
         'swapStatus': 'pending',
         'updatedAt': Timestamp.fromDate(now),
       });
+      debugPrint('SwapService: Book status updated to pending');
 
       // Create a chat between the two users for this swap
       // Chat is created when swap offer is initiated (as per assignment requirement)
-      try {
-        await _chatService.createChat(
-          userId1: user.uid,
-          userId2: book.userId,
-          swapId: docRef.id,
-          user1Email: user.email,
-          user2Email: book.userEmail,
-          user1Name: user.displayName,
-          user1PhotoURL: user.photoURL,
-        );
-      } catch (e) {
+      // Run chat creation in background to avoid blocking
+      debugPrint('💬 SwapService: Starting chat creation (non-blocking)...');
+      _chatService.createChat(
+        userId1: user.uid,
+        userId2: book.userId,
+        swapId: docRef.id,
+        user1Email: user.email,
+        user2Email: book.userEmail,
+        user1Name: user.displayName,
+        user1PhotoURL: user.photoURL,
+      ).then((_) {
+        debugPrint('SwapService: Chat created successfully');
+      }).catchError((e) {
         // Log error but don't fail the swap creation
         // Chat creation is optional - users can still chat later
-        debugPrint('Note: Chat creation failed (may already exist): $e');
-      }
+        debugPrint('⚠️ SwapService: Chat creation failed (may already exist): $e');
+      });
 
       // Note: Notifications for swap requests are handled by NotificationListener
       // which watches for new swaps for the book owner
 
-      // Return Swap object
-      final doc = await docRef.get();
-      return Swap.fromFirestore(doc);
+      // Return Swap object immediately without extra network call
+      // We construct it from the data we already have
+      debugPrint('SwapService: Returning Swap object');
+      return Swap(
+        id: docRef.id,
+        bookId: bookId,
+        requesterId: user.uid,
+        requesterEmail: user.email ?? '',
+        ownerId: book.userId,
+        ownerEmail: book.userEmail,
+        status: SwapStatus.pending,
+        createdAt: now,
+        updatedAt: now,
+      );
     } on FirebaseException catch (e) {
       throw 'Failed to create swap offer: ${e.message}';
     } catch (e) {

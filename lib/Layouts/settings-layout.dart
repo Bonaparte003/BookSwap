@@ -5,6 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:bookswap/Firebase/auth_providers.dart';
 import 'package:bookswap/Services/profile_providers.dart';
+import 'package:bookswap/Services/book_providers.dart';
+import 'package:bookswap/Services/swap_providers.dart';
+import 'package:bookswap/Services/chat_providers.dart';
 import 'package:bookswap/Screens/home.dart';
 import 'package:bookswap/Services/notification_listener.dart';
 import 'package:bookswap/routes/routes.dart';
@@ -269,9 +272,8 @@ class SettingsLayout extends ConsumerWidget {
                       // Clear all user-specific data before signing out
                       await _clearUserData(ref);
                       
-                      await authService.signOut();
-                      
-                      // Invalidate all providers to clear cached data
+                      // Invalidate ALL providers to stop streams and clear cached data
+                      // This must happen BEFORE signOut to properly cancel Firestore listeners
                       ref.invalidate(authStateChangesProvider);
                       ref.invalidate(currentUserStreamProvider);
                       ref.invalidate(currentUserProvider);
@@ -282,6 +284,21 @@ class SettingsLayout extends ConsumerWidget {
                       // Clear notification listener state
                       ref.invalidate(lastSeenSwapIdsProvider);
                       ref.invalidate(lastSeenMessageIdsProvider);
+                      
+                      // Invalidate all data providers to stop streams and clear cache
+                      // This prevents permission errors from lingering streams
+                      ref.invalidate(allBooksProvider);
+                      ref.invalidate(userBooksProvider);
+                      ref.invalidate(myOffersProvider);
+                      ref.invalidate(receivedOffersProvider);
+                      ref.invalidate(userChatsProvider);
+                      ref.invalidate(chatMessagesProvider);
+                      
+                      // Sign out after invalidating providers
+                      await authService.signOut();
+                      
+                      // Small delay to ensure all streams are cancelled
+                      await Future.delayed(const Duration(milliseconds: 100));
                       
                       if (context.mounted) {
                         Navigator.pushReplacementNamed(context, AppRoutes.login);

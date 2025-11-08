@@ -39,9 +39,9 @@ class BookService {
 
     try {
       // Verify Storage is accessible
-      debugPrint('🔄 Starting image upload to Firebase Storage...');
-      debugPrint('📍 Storage bucket: bookswap-fec4c.firebasestorage.app');
-      debugPrint('👤 User ID: ${user.uid}');
+      debugPrint(' Starting image upload to Firebase Storage...');
+      debugPrint(' Storage bucket: bookswap-fec4c.firebasestorage.app');
+      debugPrint(' User ID: ${user.uid}');
       
       // Step 1: Upload image to Firebase Storage
       // Create a unique filename to avoid conflicts
@@ -59,7 +59,7 @@ class BookService {
         },
       );
       
-      debugPrint('⬆️ Uploading file...');
+      debugPrint(' Uploading file...');
       // Upload the file with metadata
       final UploadTask uploadTask = storageRef.putFile(
         coverImageFile,
@@ -68,15 +68,15 @@ class BookService {
       
       // Wait for upload to complete with progress tracking
       final TaskSnapshot snapshot = await uploadTask.whenComplete(() {
-        debugPrint('✅ Upload task completed');
+        debugPrint(' Upload task completed');
       });
       
-      debugPrint('✅ Image uploaded successfully. Bytes: ${snapshot.bytesTransferred}');
+      debugPrint(' Image uploaded successfully. Bytes: ${snapshot.bytesTransferred}');
       
       // Step 2: Get download URL
-      debugPrint('🔗 Getting download URL...');
+      debugPrint(' Getting download URL...');
       final String coverImageUrl = await storageRef.getDownloadURL();
-      debugPrint('✅ Image URL: $coverImageUrl');
+      debugPrint(' Image URL: $coverImageUrl');
 
       // Step 3: Create book data
       final now = DateTime.now();
@@ -114,10 +114,10 @@ class BookService {
         errorMessage = 'Failed to create book listing: ${e.message ?? e.code}';
       }
       
-      debugPrint('❌ Firebase Error: ${e.code} - ${e.message}');
+      debugPrint(' Firebase Error: ${e.code} - ${e.message}');
       throw errorMessage;
     } catch (e) {
-      debugPrint('❌ Unexpected error: $e');
+      debugPrint(' Unexpected error: $e');
       throw 'An unexpected error occurred: $e';
     }
   }

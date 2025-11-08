@@ -3,6 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bookswap/Firebase/auth_service.dart';
 import 'package:bookswap/Firebase/auth_providers.dart';
+import 'package:bookswap/Services/book_providers.dart';
+import 'package:bookswap/Services/swap_providers.dart';
+import 'package:bookswap/Services/chat_providers.dart';
+import 'package:bookswap/Services/notification_listener.dart';
+import 'package:bookswap/Layouts/settings-layout.dart';
+import 'package:bookswap/Screens/home.dart';
 import 'package:bookswap/routes/routes.dart';
 
 class Login extends ConsumerStatefulWidget {
@@ -45,8 +51,24 @@ class _LoginState extends ConsumerState<Login> {
         await userCredential!.user!.reload();
         await userCredential.user!.getIdToken(true);
         
-        // Invalidate providers to force AuthWrapper to re-check auth state
+        // Invalidate ALL providers to start completely fresh
+        // This ensures no cached data from previous sessions or accounts
         ref.invalidate(authStateChangesProvider);
+        ref.invalidate(currentUserStreamProvider);
+        ref.invalidate(currentUserProvider);
+        ref.invalidate(selectedTabIndexProvider);
+        ref.invalidate(notificationsEnabledProvider);
+        ref.invalidate(emailUpdatesEnabledProvider);
+        ref.invalidate(lastSeenSwapIdsProvider);
+        ref.invalidate(lastSeenMessageIdsProvider);
+        
+        // Invalidate all data providers to start fresh
+        ref.invalidate(allBooksProvider);
+        ref.invalidate(userBooksProvider);
+        ref.invalidate(myOffersProvider);
+        ref.invalidate(receivedOffersProvider);
+        ref.invalidate(userChatsProvider);
+        ref.invalidate(chatMessagesProvider);
         
         // Debug: Check verification status
         final isVerified = userCredential.user!.emailVerified;

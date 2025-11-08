@@ -53,6 +53,10 @@ dependencies:
 
   # Notifications
   flutter_local_notifications: ^17.2.2
+  
+  # HTTP and file system
+  http: ^1.2.2
+  path_provider: ^2.1.4
 
 dev_dependencies:
   flutter_test:

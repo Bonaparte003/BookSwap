@@ -58,11 +58,13 @@ class Home extends ConsumerWidget {
                 ],
               ),
             ),
-      body: IndexedStack(
-        index: selectedIndex,
-        children: screens,
-      ),
-      bottomNavigationBar: BottomNavigation(context, selectedIndex: selectedIndex),
+            body: const TabBarView(
+              children: [
+                ListingLayout(),
+                MyOffersScreen(),
+              ],
+            ),
+            bottomNavigationBar: BottomNavigation(context, selectedIndex: selectedIndex),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.addBook);
@@ -246,20 +248,16 @@ class BrowseScreen extends StatelessWidget {
 }
 
 /// My Listings Screen - Shows user's own books with tab for My Offers
+/// Note: This widget is not used when selectedIndex == 1 because TabBarView
+/// is handled directly in the Home widget. This is kept for compatibility.
 class MyListingsScreen extends StatelessWidget {
   const MyListingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color.fromARGB(255, 248, 248, 248),
-      child: const TabBarView(
-          children: [
-            ListingLayout(),
-            MyOffersScreen(),
-          ],
-      ),
-    );
+    // This should never be rendered when selectedIndex == 1
+    // because Home returns a different structure for that case
+    return const ListingLayout();
   }
 }
 

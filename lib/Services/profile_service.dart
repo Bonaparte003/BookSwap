@@ -18,7 +18,7 @@ class ProfileService {
     }
 
     try {
-      debugPrint('🔄 Starting profile picture upload...');
+      debugPrint('Starting profile picture upload...');
       
       // Create a unique filename
       final String fileName = 'profile_pictures/${user.uid}/${DateTime.now().millisecondsSinceEpoch}.jpg';
@@ -35,15 +35,15 @@ class ProfileService {
         },
       );
       
-      debugPrint('⬆️ Uploading profile picture...');
+      debugPrint('Uploading profile picture...');
       final UploadTask uploadTask = storageRef.putFile(imageFile, metadata);
       
       final TaskSnapshot snapshot = await uploadTask;
-      debugPrint('✅ Profile picture uploaded successfully');
+      debugPrint('Profile picture uploaded successfully');
       
       // Get download URL
       final String downloadUrl = await storageRef.getDownloadURL();
-      debugPrint('✅ Profile picture URL: $downloadUrl');
+      debugPrint('Profile picture URL: $downloadUrl');
       
       // Update user's photoURL in Firebase Auth
       await user.updatePhotoURL(downloadUrl);
@@ -51,7 +51,7 @@ class ProfileService {
       
       return downloadUrl;
     } catch (e) {
-      debugPrint('❌ Error uploading profile picture: $e');
+      debugPrint('Error uploading profile picture: $e');
       throw 'Failed to upload profile picture: $e';
     }
   }

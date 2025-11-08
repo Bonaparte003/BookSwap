@@ -20,13 +20,15 @@ class _MyOffersScreenState extends ConsumerState<MyOffersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = ref.watch(currentUserProvider);
+    final currentUserAsync = ref.watch(currentUserStreamProvider);
 
-    if (currentUser == null) {
-      return const Center(
-        child: Text('Please log in to view your offers'),
-      );
-    }
+    return currentUserAsync.when(
+      data: (currentUser) {
+        if (currentUser == null) {
+          return const Center(
+            child: Text('Please log in to view your offers'),
+          );
+        }
 
     return Container(
       color: const Color.fromARGB(255, 248, 248, 248),
@@ -109,6 +111,12 @@ class _MyOffersScreenState extends ConsumerState<MyOffersScreen> {
               : _ReceivedOffersTab(userId: currentUser.uid),
         ),
         ],
+      ),
+    );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => Center(
+        child: Text('Error: $error'),
       ),
     );
   }
