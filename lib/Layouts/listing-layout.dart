@@ -47,7 +47,7 @@ class ListingLayout extends ConsumerWidget {
         }
 
         return ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.zero,
           itemCount: books.length,
           itemBuilder: (context, index) {
             final book = books[index];
@@ -69,99 +69,135 @@ class _BookCard extends ConsumerWidget {
 
   const _BookCard({required this.book});
 
+  String _getDaysAgo(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+    final days = difference.inDays;
+    
+    if (days == 0) {
+      return 'Today';
+    } else if (days == 1) {
+      return '1 day ago';
+    } else {
+      return '$days days ago';
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bookService = ref.watch(bookServiceProvider);
+    final isSwapped = book.swapStatus?.toLowerCase() == 'swapped';
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: Color.fromARGB(255, 230, 230, 230),
+            width: 1,
+          ),
+        ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Book Cover Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                book.coverImageUrl,
-                width: 80,
-                height: 120,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 80,
-                    height: 120,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.book, size: 40),
-                  );
-                },
-              ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Book Cover Image
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: Image.network(
+              book.coverImageUrl,
+              width: 60,
+              height: 90,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: 60,
+                  height: 90,
+                  color: Colors.grey[300],
+                  child: const Icon(Icons.book, size: 30),
+                );
+              },
             ),
-            const SizedBox(width: 16),
-            // Book Details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    book.title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+          ),
+          const SizedBox(width: 16),
+          // Book Details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  book.title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 0, 0, 0),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'by ${book.author}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Color.fromARGB(255, 100, 100, 100),
-                    ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${book.author}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color.fromARGB(255, 100, 100, 100),
                   ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  book.condition.displayName,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color.fromARGB(255, 100, 100, 100),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.folder_outlined,
+                      size: 14,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      _getDaysAgo(book.createdAt),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ),
+                if (isSwapped) ...[
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: _getConditionColor(book.condition),
+                      color: Colors.green[50],
                       borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: Colors.green[200]!),
                     ),
-                    child: Text(
-                      book.condition.displayName,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.check_circle, color: Colors.green[700], size: 14),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Swapped',
+                          style: TextStyle(
+                            color: Colors.green[700],
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  if (book.swapStatus != null) ...[
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: _getSwapStatusColor(book.swapStatus!),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'Swap: ${book.swapStatus}',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 12),
+                ] else ...[
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Expanded(
-                        child: OutlinedButton.icon(
+                        child: OutlinedButton(
                           onPressed: () {
                             Navigator.pushNamed(
                               context,
@@ -169,17 +205,20 @@ class _BookCard extends ConsumerWidget {
                               arguments: book,
                             );
                           },
-                          icon: const Icon(Icons.edit, size: 18),
-                          label: const Text('Edit'),
                           style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             foregroundColor: const Color.fromARGB(255, 0, 0, 0),
                             side: const BorderSide(color: Color.fromARGB(255, 0, 0, 0)),
+                          ),
+                          child: const Text(
+                            'Edit',
+                            style: TextStyle(fontSize: 12),
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: ElevatedButton.icon(
+                        child: ElevatedButton(
                           onPressed: () async {
                             // Show confirmation dialog
                             final confirmed = await showDialog<bool>(
@@ -227,47 +266,27 @@ class _BookCard extends ConsumerWidget {
                               }
                             }
                           },
-                          icon: const Icon(Icons.delete, size: 18),
-                          label: const Text('Delete'),
                           style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             backgroundColor: Colors.red,
                             foregroundColor: Colors.white,
+                          ),
+                          child: const Text(
+                            'Delete',
+                            style: TextStyle(fontSize: 12),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ],
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Color _getConditionColor(BookCondition condition) {
-    switch (condition) {
-      case BookCondition.newBook:
-        return Colors.green;
-      case BookCondition.likeNew:
-        return Colors.blue;
-      case BookCondition.good:
-        return Colors.orange;
-      case BookCondition.used:
-        return Colors.grey;
-    }
-  }
-
-  Color _getSwapStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'pending':
-        return Colors.orange;
-      case 'swapped':
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
-  }
 }
 

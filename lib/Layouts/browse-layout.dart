@@ -181,7 +181,7 @@ class _BookCard extends ConsumerWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'by ${book.author}',
+                  '${book.author}',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Color.fromARGB(255, 100, 100, 100),
