@@ -8,45 +8,107 @@ import 'package:bookswap/Services/book_providers.dart';
 import 'package:bookswap/Screens/chat_detail.dart';
 
 /// My Offers Screen - Shows swap offers (both sent and received)
-class MyOffersScreen extends ConsumerWidget {
+class MyOffersScreen extends ConsumerStatefulWidget {
   const MyOffersScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MyOffersScreen> createState() => _MyOffersScreenState();
+}
+
+class _MyOffersScreenState extends ConsumerState<MyOffersScreen> {
+  int _selectedSegment = 0; // 0 = Sent, 1 = Received
+
+  @override
+  Widget build(BuildContext context) {
     final currentUser = ref.watch(currentUserProvider);
 
     if (currentUser == null) {
-      return const Scaffold(
-        body: Center(
-          child: Text('Please log in to view your offers'),
-        ),
+      return const Center(
+        child: Text('Please log in to view your offers'),
       );
     }
 
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 253, 230, 193),
-        appBar: AppBar(
-          title: const Text('My Offers'),
-          backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-          foregroundColor: Colors.white,
-          bottom: const TabBar(
-            labelColor: Color.fromARGB(255, 220, 187, 133),
-            unselectedLabelColor: Colors.white,
-            indicatorColor: Color.fromARGB(255, 220, 187, 133),
-            tabs: [
-              Tab(text: 'Sent'),
-              Tab(text: 'Received'),
-            ],
+    return Container(
+      color: const Color.fromARGB(255, 248, 248, 248),
+      child: Column(
+        children: [
+          // Segmented Control for Sent/Received
+          Container(
+            margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedSegment = 0;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        color: _selectedSegment == 0
+                            ? const Color.fromARGB(255, 250, 174, 22)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'Sent',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: _selectedSegment == 0
+                              ? Colors.white
+                              : Colors.grey[700],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedSegment = 1;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        color: _selectedSegment == 1
+                            ? const Color.fromARGB(255, 250, 174, 22)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'Received',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: _selectedSegment == 1
+                              ? Colors.white
+                              : Colors.grey[700],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
+        // Content based on selected segment
+        Expanded(
+          child: _selectedSegment == 0
+              ? _SentOffersTab(userId: currentUser.uid)
+              : _ReceivedOffersTab(userId: currentUser.uid),
         ),
-        body: TabBarView(
-          children: [
-            _SentOffersTab(userId: currentUser.uid),
-            _ReceivedOffersTab(userId: currentUser.uid),
-          ],
-        ),
+        ],
       ),
     );
   }

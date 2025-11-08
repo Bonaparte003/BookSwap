@@ -182,8 +182,8 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                         ),
                         decoration: BoxDecoration(
                           color: isMe
-                              ? const Color.fromARGB(255, 0, 0, 0)
-                              : Colors.white,
+                              ? const Color.fromARGB(255, 250, 174, 22)
+                              : const Color.fromARGB(255, 5, 22, 46),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         constraints: BoxConstraints(
@@ -195,7 +195,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                             Text(
                               message.text,
                               style: TextStyle(
-                                color: isMe ? Colors.white : Colors.black87,
+                                color: Colors.white,
                                 fontSize: 16,
                               ),
                             ),
@@ -203,9 +203,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
                             Text(
                               _formatTime(message.timestamp),
                               style: TextStyle(
-                                color: isMe
-                                    ? Colors.white70
-                                    : Colors.black54,
+                                color: Colors.white70,
                                 fontSize: 10,
                               ),
                             ),
