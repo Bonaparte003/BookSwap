@@ -1,4 +1,4 @@
-# 📚 BookSwap
+#  BookSwap
 
 <div align="center">
 
@@ -112,7 +112,7 @@
 - Responsive layouts
 - Smooth animations
 
-### ⚙️ Settings & Profile
+###  Settings & Profile
 - Profile picture management
 - Notification preferences
 - Account settings
@@ -131,6 +131,11 @@
   - **Database**: Cloud Firestore
   - **Storage**: Firebase Storage
 - **Notifications**: Local Notifications
+
+## ERD Diagram
+
+<img width="596" height="777" alt="ERD-Diagram" src="https://github.com/user-attachments/assets/8574316a-1f93-44df-86b0-a1fa4d359f1b" />
+
 
 ### State Management
 
